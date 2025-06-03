@@ -43,7 +43,7 @@ registerButton.addEventListener("click", (e) => {
             const user = userCredential.user;
             // ...
             window.alert("Success! Account created.");
-            window.location.href = 'dashboard.html';
+            window.location.href = '../pages/dashboard.html';
         })
         .catch((error) => {
             const errorCode = error.code;

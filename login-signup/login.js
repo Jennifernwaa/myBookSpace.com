@@ -37,7 +37,7 @@ loginButton.addEventListener("click", (e) => {
             console.log("Success! Welcome back!");
             window.alert("Success! Welcome back!");
 
-            window.location.href = '../dashboard.html';
+            window.location.href = '../pages/dashboard.html';
             // ...
         })
         .catch((error) => {

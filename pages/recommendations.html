@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Book Recommender</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+
+  <div class="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <h1 class="text-2xl font-bold mb-4">Book Recommender</h1>
+
+    <textarea id="userInput" class="w-full border rounded p-2 mb-4" placeholder="Tell me your favorite genres or books..."></textarea>
+    <button id="recommendBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Get Recommendations</button>
+
+    <div id="results" class="mt-6 space-y-4"></div>
+  </div>
+
+  <script>
+    document.getElementById("recommendBtn").addEventListener("click", async () => {
+      const input = document.getElementById("userInput").value;
+      const response = await fetch("/api/groq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `I like these books or genres: ${input}. Recommend 5 books with title, author, and short description in JSON format.`
+        })
+      });
+
+      const data = await response.json();
+      const message = data.choices[0].message.content;
+
+      let books;
+      try {
+        books = JSON.parse(message);
+      } catch (e) {
+        document.getElementById("results").innerText = "Couldn't understand AI response. Try again.";
+        return;
+      }
+
+      const container = document.getElementById("results");
+      container.innerHTML = "";
+      books.forEach(book => {
+        container.innerHTML += `
+          <div class="bg-gray-50 border rounded p-4">
+            <h3 class="text-lg font-semibold">${book.title}</h3>
+            <p class="text-sm text-gray-600">by ${book.author}</p>
+            <p class="mt-2 text-gray-700">${book.description}</p>
+          </div>
+        `;
+      });
+    });
+  </script>
+
+</body>
+</html>

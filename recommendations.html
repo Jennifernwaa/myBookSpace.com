@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Book Recommender</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+
+  <div class="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <h1 class="text-2xl font-bold mb-4">Book Recommender</h1>
+
+    <textarea id="userInput" class="w-full border rounded p-2 mb-4" placeholder="Tell me your favorite genres or books..."></textarea>
+    <button id="recommendBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Get Recommendations</button>
+
+    <div id="results" class="mt-6 space-y-4"></div>
+  </div>
+
+  <script>
+  document.getElementById("recommendBtn").addEventListener("click", async () => {
+    const userInput = document.getElementById("userInput").value.trim();
+    if (!userInput) {
+      alert("Please enter a book genre or title");
+      return;
+    }
+
+    const resultsContainer = document.getElementById("results");
+    resultsContainer.innerHTML = "Loading..."; // Use innerHTML for initial loading message
+
+    try {
+      const response = await fetch("/api/groq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Send only the user's raw input to the API
+          userInput: userInput
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Directly access the content from the Groq API response structure
+      const messageContent = data.choices[0].message.content.trim();
+
+      let books;
+      try {
+        books = JSON.parse(messageContent);
+        console.log("AI response (parsed):", books); // Log the parsed object
+      } catch (e) {
+        resultsContainer.innerHTML = "<p class='text-red-500'>Couldn't understand AI response. Please try again or refine your input.</p>";
+        console.error("Error parsing JSON from AI:", e);
+        console.log("Raw AI response content that failed to parse:", messageContent);
+        return;
+      }
+
+      resultsContainer.innerHTML = ""; // Clear "Loading..."
+      if (books && books.length > 0) {
+        books.forEach(book => {
+          resultsContainer.innerHTML += `
+            <div class="bg-gray-50 border rounded p-4 mb-4">
+              <h3 class="text-lg font-semibold">${book.title || 'N/A'}</h3>
+              <p class="text-sm text-gray-600">by ${book.author || 'N/A'}</p>
+              <p class="mt-2 text-gray-700">${book.description || 'No description available.'}</p>
+            </div>
+          `;
+        });
+      } else {
+        resultsContainer.innerHTML = "<p class='text-gray-600'>No book recommendations found. Try a different input!</p>";
+      }
+
+    } catch (error) {
+      resultsContainer.innerHTML = `<p class='text-red-500'>Failed to get recommendations: ${error.message}. Please check the console for more details.</p>`;
+      console.error("Fetch or API error:", error);
+    }
+  });
+</script>
+
+</body>
+</html>

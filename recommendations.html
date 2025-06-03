@@ -1,94 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Book Recommender</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-6 font-sans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Get personalized AI-powered book recommendations based on your favorite genres and authors."/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>AI Book Recommendations - My Book Space</title>
 
-  <div class="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6">
-    <h1 class="text-2xl font-bold mb-4">Book Recommender</h1>
-
-    <textarea id="userInput" class="w-full border rounded p-2 mb-4" placeholder="Tell me your favorite genres or books..."></textarea>
-    <button id="recommendBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Get Recommendations</button>
-
-    <div id="results" class="mt-6 space-y-4"></div>
-  </div>
-
-  <script>
-  document.getElementById("recommendBtn").addEventListener("click", async () => {
-    const userInput = document.getElementById("userInput").value.trim();
-    if (!userInput) {
-      alert("Please enter a book genre or title");
-      return;
-    }
-
-    const resultsContainer = document.getElementById("results");
-    resultsContainer.innerHTML = "Loading...";
-
-    try {
-      const response = await fetch("/api/groq", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userInput: userInput
-        })
-      });
-
-      if (!response.ok) {
-        // Log the full response body if it's an error to help debug
-        const errorBody = await response.text();
-        console.error("API Error Response Body:", errorBody);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const messageContent = data.choices[0].message.content.trim();
-
-      let parsedResponse; // This will hold the parsed JSON object: { books: [...] }
-      try {
-        parsedResponse = JSON.parse(messageContent);
-        console.log("AI raw response message content:", messageContent);
-        console.log("AI parsed response object:", parsedResponse);
-
-        // --- IMPORTANT CHANGE HERE ---
-        // Get the books array from the 'books' key in the parsed object
-        const books = parsedResponse.books;
-        // --- END OF IMPORTANT CHANGE ---
-
-        if (!Array.isArray(books)) {
-          throw new Error("AI response did not contain a valid 'books' array.");
+    <!--Colour Palette-->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'space-pink-light': '#F1CED4',
+              'space-pink-dark': '#F8CCD3',
+              'space-red': '#AB2945',
+              'space-brown': '#391306',
+              'green': '#C9C7BF',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.6s ease-in-out',
+              'slide-up': 'slideUp 0.5s ease-out',
+              'pulse-gentle': 'pulse-gentle 2s infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              'pulse-gentle': {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.02)' }
+              }
+            }
+          }
         }
+      }
+    </script>
 
-        resultsContainer.innerHTML = "";
-        if (books.length > 0) {
-          books.forEach(book => {
-            resultsContainer.innerHTML += `
-              <div class="bg-gray-50 border rounded p-4 mb-4">
-                <h3 class="text-lg font-semibold">${book.title || 'N/A'}</h3>
-                <p class="text-sm text-gray-600">by ${book.author || 'N/A'}</p>
-                <p class="mt-2 text-gray-700">${book.description || 'No description available.'}</p>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        h1, h2, h3 { font-family: 'Lora', serif; }
+        
+        .book-card {
+          transition: all 0.3s ease;
+          background: linear-gradient(135deg, #F8CCD3 0%, #F1CED4 100%);
+        }
+        
+        .book-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(171, 41, 69, 0.15);
+        }
+        
+        .input-focus:focus {
+          box-shadow: 0 0 0 3px rgba(171, 41, 69, 0.1);
+          border-color: #AB2945;
+        }
+        
+        .loading-dots::after {
+          content: '';
+          animation: loading-dots 1.5s infinite;
+        }
+        
+        @keyframes loading-dots {
+          0%, 20% { content: ''; }
+          40% { content: '.'; }
+          60% { content: '..'; }
+          80%, 100% { content: '...'; }
+        }
+        
+        .gradient-bg {
+          background: linear-gradient(135deg, #F1CED4 0%, #F8CCD3 50%, #C9C7BF 100%);
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  </head>
+  
+  <body class="gradient-bg text-space-brown min-h-screen">
+      <header class="bg-white bg-opacity-90 backdrop-blur-md shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold font-serif"> 
+                <a href="index.html" class="hover:text-space-red transition-colors">myBookSpace 📚</a>
+            </div>
+            <div class="space-x-4">
+                <a href="about.html" class="text-space-red hover:underline transition-all">About</a>
+                <a href="contact.html" class="text-space-red hover:underline transition-all">Contact</a>
+                <a href="login-signup/login.html" class="bg-white text-space-red px-4 py-2 rounded-md font-semibold border border-space-red hover:bg-space-pink-dark transition-colors">Log In</a>
+                <a href="login-signup/register.html" class="bg-space-red text-white px-4 py-2 rounded-md font-semibold hover:bg-opacity-90 transition-opacity">Sign Up</a>
+            </div>
+        </nav>
+      </header>
+
+      <main class="container mx-auto px-6 py-12">
+          <!-- Hero Section -->
+          <div class="text-center mb-12 animate-fade-in">
+              <h1 class="text-5xl md:text-6xl font-bold text-space-brown leading-tight mb-4">
+                  Discover Your Next 
+                  <span class="text-space-red">Great Read</span> 📖
+              </h1>
+              <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
+                  Tell our AI about your favorite genres, authors, or books you've loved, and we'll find perfect recommendations just for you.
+              </p>
+          </div>
+
+          <!-- Input Section -->
+          <div class="max-w-4xl mx-auto mb-12">
+              <div class="bg-white rounded-2xl shadow-lg p-8 animate-slide-up">
+                  <div class="mb-6">
+                      <label for="userInput" class="block text-lg font-semibold text-space-brown mb-3">
+                          What genres, authors, or books do you love? ✨
+                      </label>
+                      <textarea 
+                          id="userInput" 
+                          class="w-full border-2 border-space-pink-dark rounded-xl p-4 text-space-brown placeholder-gray-500 focus:outline-none input-focus transition-all resize-none" 
+                          rows="4"
+                          placeholder="Example: I love fantasy novels like Harry Potter and Lord of the Rings, or I enjoy mystery thrillers by Agatha Christie..."
+                      ></textarea>
+                  </div>
+                  
+                  <div class="text-center">
+                      <button 
+                          id="recommendBtn" 
+                          class="bg-space-red text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-space-red focus:ring-opacity-30"
+                      >
+                          <span id="btnText">Get My Recommendations</span>
+                          <span id="btnLoader" class="hidden">Getting recommendations<span class="loading-dots"></span></span>
+                      </button>
+                  </div>
               </div>
-            `;
+          </div>
+
+          <!-- Results Section -->
+          <div id="results" class="max-w-6xl mx-auto"></div>
+      </main>
+
+      <footer class="bg-space-brown text-white py-8 mt-20">
+          <div class="container mx-auto px-6 text-center">
+              <p>&copy; 2025 My Book Space. All Rights Reserved to Jennifer :).</p>
+          </div>
+      </footer>
+
+      <script>
+          document.getElementById("recommendBtn").addEventListener("click", async () => {
+              const userInput = document.getElementById("userInput").value.trim();
+              const btnText = document.getElementById("btnText");
+              const btnLoader = document.getElementById("btnLoader");
+              const recommendBtn = document.getElementById("recommendBtn");
+              
+              if (!userInput) {
+                  showError("Please tell us about your reading preferences first! 📝");
+                  return;
+              }
+
+              // Show loading state
+              btnText.classList.add("hidden");
+              btnLoader.classList.remove("hidden");
+              recommendBtn.disabled = true;
+              recommendBtn.classList.add("opacity-75");
+
+              const resultsContainer = document.getElementById("results");
+              resultsContainer.innerHTML = `
+                  <div class="text-center py-12">
+                      <div class="inline-block animate-pulse-gentle">
+                          <div class="text-6xl mb-4">🤖</div>
+                          <p class="text-xl text-space-brown">Our AI is finding perfect books for you<span class="loading-dots"></span></p>
+                      </div>
+                  </div>
+              `;
+
+              try {
+                  const response = await fetch("/api/groq", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                          userInput: userInput
+                      })
+                  });
+
+                  if (!response.ok) {
+                      const errorBody = await response.text();
+                      console.error("API Error Response Body:", errorBody);
+                      throw new Error(`HTTP error! status: ${response.status}`);
+                  }
+
+                  const data = await response.json();
+                  const messageContent = data.choices[0].message.content.trim();
+
+                  let parsedResponse;
+                  try {
+                      parsedResponse = JSON.parse(messageContent);
+                      console.log("AI raw response message content:", messageContent);
+                      console.log("AI parsed response object:", parsedResponse);
+
+                      const books = parsedResponse.books;
+
+                      if (!Array.isArray(books)) {
+                          throw new Error("AI response did not contain a valid 'books' array.");
+                      }
+
+                      displayResults(books);
+
+                  } catch (e) {
+                      showError("Couldn't understand AI response. Please try again or refine your input! 🤔");
+                      console.error("Error parsing JSON or invalid structure from AI:", e);
+                      console.log("Raw AI response content that failed to parse/process:", messageContent);
+                      return;
+                  }
+
+              } catch (error) {
+                  showError(`Failed to get recommendations: ${error.message}. Please try again! 😅`);
+                  console.error("Fetch or API error:", error);
+              } finally {
+                  // Reset button state
+                  btnText.classList.remove("hidden");
+                  btnLoader.classList.add("hidden");
+                  recommendBtn.disabled = false;
+                  recommendBtn.classList.remove("opacity-75");
+              }
           });
-        } else {
-          resultsContainer.innerHTML = "<p class='text-gray-600'>No book recommendations found. Try a different input!</p>";
-        }
 
-      } catch (e) {
-        resultsContainer.innerHTML = "<p class='text-red-500'>Couldn't understand AI response. Please try again or refine your input.</p>";
-        console.error("Error parsing JSON or invalid structure from AI:", e);
-        console.log("Raw AI response content that failed to parse/process:", messageContent);
-        return;
-      }
+          function displayResults(books) {
+              const resultsContainer = document.getElementById("results");
+              
+              if (books.length === 0) {
+                  resultsContainer.innerHTML = `
+                      <div class="text-center py-12">
+                          <div class="text-6xl mb-4">📚</div>
+                          <p class="text-xl text-gray-600">No book recommendations found. Try describing different genres or authors! 🤓</p>
+                      </div>
+                  `;
+                  return;
+              }
 
-    } catch (error) {
-      resultsContainer.innerHTML = `<p class='text-red-500'>Failed to get recommendations: ${error.message}. Please check the console for more details.</p>`;
-      console.error("Fetch or API error:", error);
-    }
-  });
-</script>
+              resultsContainer.innerHTML = `
+                  <div class="text-center mb-8 animate-fade-in">
+                      <h2 class="text-3xl font-bold text-space-brown mb-2">Your Personalized Recommendations</h2>
+                      <p class="text-gray-600">Found ${books.length} perfect ${books.length === 1 ? 'match' : 'matches'} for you! ✨</p>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      ${books.map((book, index) => `
+                          <div class="book-card rounded-2xl p-6 shadow-lg animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                              <div class="mb-4">
+                                  <h3 class="text-xl font-bold text-space-brown mb-2 leading-tight">
+                                      ${book.title || 'Unknown Title'}
+                                  </h3>
+                                  <p class="text-space-red font-semibold">
+                                      by ${book.author || 'Unknown Author'}
+                                  </p>
+                              </div>
+                              
+                              <p class="text-gray-700 mb-6 leading-relaxed">
+                                  ${book.description || 'No description available.'}
+                              </p>
+                              
+                              <div class="flex flex-col sm:flex-row gap-3">
+                                  <button 
+                                      class="flex-1 bg-space-red text-white px-4 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-space-red focus:ring-opacity-30"
+                                      onclick="addToShelf('${(book.title || '').replace(/'/g, "\\'")}', '${(book.author || '').replace(/'/g, "\\'")}')"
+                                  >
+                                      📚 Add to Shelf
+                                  </button>
+                                  <button 
+                                      class="flex-1 bg-white text-space-red px-4 py-3 rounded-lg font-semibold border-2 border-space-red hover:bg-space-pink-light transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-space-red focus:ring-opacity-30"
+                                      onclick="searchBook('${(book.title || '').replace(/'/g, "\\'")}', '${(book.author || '').replace(/'/g, "\\'")}')"
+                                  >
+                                      🔍 Learn More
+                                  </button>
+                              </div>
+                          </div>
+                      `).join('')}
+                  </div>
+              `;
+          }
 
-</body>
+          function showError(message) {
+              const resultsContainer = document.getElementById("results");
+              resultsContainer.innerHTML = `
+                  <div class="text-center py-12">
+                      <div class="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-2xl mx-auto">
+                          <div class="text-4xl mb-4">😅</div>
+                          <p class="text-red-700 text-lg">${message}</p>
+                      </div>
+                  </div>
+              `;
+          }
+
+          function addToShelf(title, author) {
+              // TODO: Implement add to shelf functionality
+              // For now, show a success message
+              const notification = document.createElement('div');
+              notification.innerHTML = `
+                  <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up">
+                      ✅ "${title}" added to your shelf!
+                  </div>
+              `;
+              document.body.appendChild(notification);
+              
+              setTimeout(() => {
+                  notification.remove();
+              }, 3000);
+              
+              console.log(`Adding to shelf: ${title} by ${author}`);
+          }
+
+          function searchBook(title, author) {
+              // TODO: Implement Google Books API search
+              // For now, open a Google search
+              const searchQuery = encodeURIComponent(`${title} ${author} book`);
+              window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
+          }
+
+          // Add enter key support for textarea
+          document.getElementById("userInput").addEventListener("keydown", function(event) {
+              if (event.key === "Enter" && event.ctrlKey) {
+                  document.getElementById("recommendBtn").click();
+              }
+          });
+      </script>
+  </body>
 </html>

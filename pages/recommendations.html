@@ -17,40 +17,61 @@
   </div>
 
   <script>
-    document.getElementById("recommendBtn").addEventListener("click", async () => {
-      const input = document.getElementById("userInput").value;
+  document.getElementById("recommendBtn").addEventListener("click", async () => {
+    const input = document.getElementById("userInput").value.trim();
+    if (!input) {
+      alert("Please enter a book genre or title");
+      return;
+    }
+    const container = document.getElementById("results");
+    container.innerText = "Loading...";
+
+    try {
       const response = await fetch("/api/groq", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: `I like these books or genres: ${input}. Recommend 5 books with title, author, and short description in JSON format.`
+          prompt: `I like these books or genres: ${input}. Please recommend 5 books.
+          Format your response ONLY as a valid JSON array like this:
+          [
+            { "title": "Book Title 1", "author": "Author Name 1", "description": "A brief description of the book." },
+            { "title": "Book Title 2", "author": "Author Name 2", "description": "Another brief description." }
+          ]
+          Return ONLY the JSON and nothing else.
+          `
         })
       });
 
       const data = await response.json();
-      const message = data.choices[0].message.content;
+      const message = data.choices[0].message.content.trim();
 
       let books;
       try {
         books = JSON.parse(message);
       } catch (e) {
-        document.getElementById("results").innerText = "Couldn't understand AI response. Try again.";
+        container.innerText = "Couldn't understand AI response. Try again.";
+        console.error("Error parsing JSON:", e);
+        console.log("AI response:", message);
         return;
       }
 
-      const container = document.getElementById("results");
       container.innerHTML = "";
       books.forEach(book => {
         container.innerHTML += `
-          <div class="bg-gray-50 border rounded p-4">
+          <div class="bg-gray-50 border rounded p-4 mb-4">
             <h3 class="text-lg font-semibold">${book.title}</h3>
             <p class="text-sm text-gray-600">by ${book.author}</p>
             <p class="mt-2 text-gray-700">${book.description}</p>
           </div>
         `;
       });
-    });
-  </script>
+    } catch (error) {
+      container.innerText = "Failed to get recommendations. Try again.";
+      console.error(error);
+    }
+  });
+</script>
+
 
 </body>
 </html>

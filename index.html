@@ -6,6 +6,7 @@
     <meta name="description" content="A single web app to log your reading, organize your books on virtual shelves, and get personalized recommendations from AI."/>
     <script src="https://cdn.tailwindcss.com"></script>
     <title>My Book Space</title>
+    <link rel="stylesheet" href="animate.css">
 
     <!--Colour Palette-->
     <script>
@@ -56,6 +57,12 @@
                   <p class="text-lg md:text-xl mt-4 max-w-2xl mx-auto">
                       Track your reading, organize your digital shelves, and discover your next great read, all in one beautiful app.
                   </p>
+                  <div class="wrap">
+                      <div class="item">
+                          <p>Crescent City</p>
+                          <img src="images/crescent_city_botw.jpg" alt="">
+                      </div>
+                  </div>
                   <div class="mt-8">
                       <a href="register.html" class="bg-space-red text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-opacity">Get Started for Free</a>
                   </div>
@@ -92,12 +99,55 @@
                   </div>
               </div>
           </section>
+
+          <div class="slider" style="
+            --width: 100px;
+            --height: 50px;
+            --quantity: 10;
+        ">
+            <div class="list">
+                <div class="item" style="--position: 1">Join Now</div>
+                <div class="item" style="--position: 2">Read</div>
+                <div class="item" style="--position: 3">Fun</div>
+                <div class="item" style="--position: 4">Happy</div>
+                <div class="item" style="--position: 5">Jennifer</div>
+                <div class="item" style="--position: 6">Portfolio</div>
+                <div class="item" style="--position: 7">Read</div>
+                <div class="item" style="--position: 8">Please</div>
+                <div class="item" style="--position: 9">Its</div>
+                <div class="item" style="--position: 10">Fun</div>
+            </div>
+        </div>
+
       </main>
+
 
     <footer class="bg-space-brown text-white py-8">
       <div class="container mx-auto px-6 text-center">
         <p>&copy; 2025 My Book Space. All Rights Reserved to Jennifer :).</p>
       </div>
     </footer>
+    <script>
+      let items = document.querySelectorAll('.item');
+      console.log(items);
+      items.forEach(item => {
+          item.addEventListener('mousemove', (e)=>{
+              let positionPx = e.x - item.getBoundingClientRect().left;
+              let positionX = (positionPx / item.offsetWidth) * 100;
+              console.log(positionX, positionPx);
+
+              let positionPy = event.y - item.getBoundingClientRect().top;
+              let positionY = (positionPy / item.offsetHeight) * 100;
+
+              
+              item.style.setProperty('--rX', (0.5)*(50 - positionY) + 'deg');
+              item.style.setProperty('--rY', -(0.5)*(50 - positionX) + 'deg');
+          })
+          item.addEventListener('mouseout', ()=>{
+              item.style.setProperty('--rX', '0deg');
+              item.style.setProperty('--rY', '0deg');
+          })
+      })
+    </script>
   </body>
 </html>

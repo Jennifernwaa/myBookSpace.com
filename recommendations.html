@@ -406,12 +406,14 @@ async function fetchUserBooks() {
             console.log("Fetched user books:", userBooks);
             
             // Update UI to show user's book count
-            if (userBooks.length > 0) {
-                const heroText = document.querySelector('main p');
+            if (userBooks.length > 15) {
+                userBooks = userBooks.slice(-15);
+            }   
+            const heroText = document.querySelector('main p');
                 if (heroText) {
                     heroText.innerHTML = `We found ${userBooks.length} books in your library! Our AI will use these along with your preferences to find perfect recommendations just for you.`;
+                    console.log("Updated hero text with user book count:", userBooks.length);
                 }
-            }
         } catch (error) {
             console.error("Error fetching user books:", error);
         }

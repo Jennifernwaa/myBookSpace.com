@@ -286,8 +286,18 @@ onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.href = '../login.html';
         return;
-    }
+    }  
     currentUser = user;
+    const navUserName = document.getElementById('nav-user-name');
+    
+    // Fetch current user's friends object
+    const currentUserRef = doc(db, "users", currentUser.uid);
+    const currentUserSnap = await getDoc(currentUserRef);
+    const currentUserData = currentUserSnap.data();
+    if (navUserName && navUserName.textContent === 'Reader') {
+        navUserName.textContent = currentUserData.userName || 'Reader';
+    }
+
     // Fetch all books
     const q = query(collection(db, "users", currentUser.uid, "books"));
     const snapshot = await getDocs(q);

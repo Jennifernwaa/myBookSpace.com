@@ -249,9 +249,10 @@
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-8">
-                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">myBookSpace 📚</h1>
+                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">
+                        <a href="/pages/dashboard.html" >myBookSpace</a></h1>
                     <div class="hidden md:flex space-x-6">
-                        <a href="/pages/dashboard.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Dashboard</a>
+                        <a href="/pages/mybooks.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">My Books</a>
                         <a href="/pages/friends.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Friends & Feed</a>
                         <a href="recommendations.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-3 py-2">Recommendations</a>
                     </div>
@@ -274,21 +275,17 @@
     <!-- Mobile Navigation -->
     <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
         <div class="flex justify-around py-3">
-            <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
-                <span class="text-xl mb-1">📊</span>
+            <a href="/pages/dashboard.html" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-color">
+                <span class="text-xl mb-1"></span>
                 <span class="text-xs font-medium">Dashboard</span>
             </a>
-            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">📚</span>
-                <span class="text-xs">My Books</span>
+            <a href="/pages/friends.html" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Friends & Feed</span>
             </a>
-            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">👥</span>
-                <span class="text-xs">Friends</span>
-            </a>
-            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">🌟</span>
-                <span class="text-xs">Recs</span>
+            <a href="recommendations.html" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Recommendations</span>
             </a>
         </div>
     </div>
@@ -390,7 +387,6 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 async function fetchUserBooks() {
-    if (!currentUser) return;
         try {
             const booksRef = collection(db, "users", currentUser.uid, "books");
             const booksSnap = await getDocs(booksRef);

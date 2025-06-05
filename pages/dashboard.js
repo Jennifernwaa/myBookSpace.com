@@ -572,9 +572,6 @@ function setupEventListeners() {
                 case 'My Books':
                     window.location.href = 'mybooks.html';
                     break;
-                case 'Friends':
-                    window.location.href = 'friends.html';
-                    break;
                 case 'Recommendations':
                     window.location.href = '../recommendations.html';
                     break;
@@ -595,13 +592,13 @@ function setupEventListeners() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             switch(text) {
-                case 'My Books':
-                    window.location.href = 'mybooks.html';
+                case 'Dashboard':
+                    window.location.href = 'dashboard.html';
                     break;
-                case 'Friends':
+                case 'Friends & Feed':
                     window.location.href = 'friends.html';
                     break;
-                case 'Recs':
+                case 'Recommendations':
                     window.location.href = '../recommendations.html';
                     break;
             }

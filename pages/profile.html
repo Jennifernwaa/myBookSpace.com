@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your personal profile - My Book Space">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="profile.js"></script>
+    <title>Profile - My Book Space</title>
+
+    <!-- Extended Color Palette -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'space-pink-light': '#F1CED4',
+              'space-pink-dark': '#F8CCD3',
+              'space-red': '#AB2945',
+              'space-brown': '#391306',
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
+            },
+            animation: {
+              'float': 'float 4s ease-in-out infinite',
+              'float-delayed': 'float 4s ease-in-out infinite 1s',
+              'float-delayed-2': 'float 4s ease-in-out infinite 2s',
+              'fade-in-up': 'fadeInUp 0.8s ease-out',
+              'pulse-gentle': 'pulseGentle 3s ease-in-out infinite',
+              'glow': 'glow 2s ease-in-out infinite alternate',
+              'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-8px)' }
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              pulseGentle: {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.02)' }
+              },
+              glow: {
+                '0%': { boxShadow: '0 0 20px rgba(171, 41, 69, 0.3)' },
+                '100%': { boxShadow: '0 0 30px rgba(171, 41, 69, 0.5)' }
+              },
+              bounceGentle: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-5px)' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #F7F5F0 0%, #F1ECE4 25%, #E8E2D5 50%, #EAB996 75%, #CB7666 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        h1, h2, h3 { font-family: 'Lora', serif; }
+        
+        .cosmic-nav {
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.98) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(203, 118, 102, 0.3);
+            box-shadow: 0 4px 20px rgba(57, 19, 6, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(57, 19, 6, 0.1);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(241, 236, 228, 0.8) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(203, 118, 102, 0.2);
+            box-shadow: 0 15px 35px rgba(57, 19, 6, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(57, 19, 6, 0.15);
+        }
+
+        .profile-avatar {
+            background: linear-gradient(135deg, #CB7666 0%, #A93D49 100%);
+            border: 6px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px rgba(57, 19, 6, 0.2);
+        }
+
+        .action-btn {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(57, 19, 6, 0.15);
+        }
+
+        .floating-book {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .floating-book-1 {
+            top: 10%;
+            left: 5%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-book-2 {
+            top: 60%;
+            right: 10%;
+            animation: float 8s ease-in-out infinite 2s;
+        }
+
+        .floating-book-3 {
+            bottom: 20%;
+            left: 15%;
+            animation: float 7s ease-in-out infinite 4s;
+        }
+
+        @media (max-width: 768px) {
+            .floating-book { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Background Books -->
+    <div class="floating-book floating-book-1 text-6xl">📚</div>
+    <div class="floating-book floating-book-2 text-5xl">📖</div>
+    <div class="floating-book floating-book-3 text-4xl">✨</div>
+
+
+    <!-- Navigation -->
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">
+                        <a href="dashboard.html" >myBookSpace</a></h1>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="mybooks.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">My Books</a>
+                        <a href="friends.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Friends & Feed</a>
+                        <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Recommendations</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Start of Profile -->
+                    <div class="hidden md:flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg"><a href="profile.html" class="border-b-2 border-rose-red pb-">
+                            <span class="text-white text-sm font-semibold">👤</span>
+                        </div>
+                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span></a>
+                    </div>
+                    <!-- End of Profile -->
+                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
+        <div class="flex justify-around py-3">
+            <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Friends & Feed</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Recommendations</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8 max-w-4xl">
+        <!-- Profile Header Section -->
+        <div class="glass-card rounded-3xl p-8 md:p-12 mb-12 animate-fade-in-up">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+                <!-- Profile Picture -->
+                <div class="relative">
+                    <div class="profile-avatar w-32 h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center animate-pulse-gentle">
+                        <span class="text-white text-5xl md:text-6xl">👤</span>
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-12 h-12 bg-space-red rounded-full flex items-center justify-center shadow-lg animate-bounce-gentle">
+                        <span class="text-white text-xl">📚</span>
+                    </div>
+                </div>
+
+                <!-- Profile Info -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-4xl md:text-5xl font-bold text-space-brown mb-4 font-serif" id="username"></h1>
+                    <p class="text-warm-brown text-lg mb-4 opacity-90 max-w-2xl" id="bio">
+                    </p>
+                    <div class="flex items-center justify-center md:justify-start mb-6">
+                        <span class="text-salmon font-semibold text-lg mr-2">Favorite Genre:</span>
+                        <span class="bg-gradient-to-r from-peach to-salmon text-white px-4 py-2 rounded-full font-medium shadow-lg" id="favoriteGenre" >
+                        </span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <button class="action-btn bg-space-red text-white px-8 py-3 rounded-full font-semibold hover:bg-opacity-90 shadow-lg animate-glow">
+                            Edit Profile
+                        </button>
+                        <button class="action-btn bg-white text-space-red px-8 py-3 rounded-full font-semibold border-2 border-space-red hover:bg-cream-light shadow-lg">
+                            Share Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <h2 class="text-3xl font-semibold text-space-brown mb-8 font-serif text-center">Reading Stats</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                <!-- Books Read -->
+                <div class="stat-card rounded-3xl p-8 text-center group">
+                    <div class="text-5xl mb-4 animate-float">📚</div>
+                    <div id="booksRead" class="text-4xl font-bold text-space-brown mb-2"></div>
+                    <div class="text-warm-brown font-medium text-lg">Books Read</div>
+                    <!-- <div class="mt-4 text-xs text-warm-brown opacity-70">This year: 47 books</div> -->
+                </div>
+                
+                <!-- Friends -->
+                <div class="stat-card rounded-3xl p-8 text-center group">
+                    <div class="text-5xl mb-4 animate-float-delayed">👥</div>
+                    <div id="friendsCount" class="text-4xl font-bold text-space-brown mb-2"></div>
+                    <div class="text-warm-brown font-medium text-lg">Book Friends</div>
+                    <!-- <div class="mt-4 text-xs text-warm-brown opacity-70">+5 new this month</div> -->
+                </div>
+                
+                <!-- Clubs Joined -->
+                <div class="stat-card rounded-3xl p-8 text-center group">
+                    <div class="text-5xl mb-4 animate-float-delayed-2">🏛️</div>
+                    <div class="text-4xl font-bold text-space-brown mb-2">3</div>
+                    <div class="text-warm-brown font-medium text-lg">Book Clubs</div>
+                    <div class="mt-4 text-xs text-warm-brown opacity-70">Active member</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading Activity Section -->
+        <div class="mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <div class="glass-card rounded-3xl p-8">
+                <h3 class="text-2xl font-semibold text-space-brown mb-6 font-serif text-center">Recent Activity</h3>
+                <div class="space-y-6">
+                    <!-- Activity Item 1 -->
+                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-cream-light to-ivory">
+                        <div class="w-12 h-12 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">⭐</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-space-brown font-medium">Finished reading "The Seven Husbands of Evelyn Hugo"</p>
+                            <p class="text-warm-brown text-sm opacity-75">Rated 5 stars • 2 days ago</p>
+                        </div>
+                    </div>
+
+                    <!-- Activity Item 2 -->
+                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-cream-light to-ivory">
+                        <div class="w-12 h-12 bg-gradient-to-br from-peach to-salmon rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">👥</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-space-brown font-medium">Joined "Fantasy Book Club"</p>
+                            <p class="text-warm-brown text-sm opacity-75">1 week ago</p>
+                        </div>
+                    </div>
+
+                    <!-- Activity Item 3 -->
+                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-cream-light to-ivory">
+                        <div class="w-12 h-12 bg-gradient-to-br from-space-pink-dark to-space-red rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">📖</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-space-brown font-medium">Started reading "Project Hail Mary"</p>
+                            <p class="text-warm-brown text-sm opacity-75">1 week ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Favorite Books Section -->
+        <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
+            <div class="glass-card rounded-3xl p-8">
+                <h3 class="text-2xl font-semibold text-space-brown mb-6 font-serif text-center">Favorite Books</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <!-- Book 1 -->
+                    <div class="text-center group">
+                        <div class="h-32 bg-gradient-to-br from-peach to-salmon rounded-xl mb-3 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
+                            <span class="text-white font-bold text-2xl">📖</span>
+                        </div>
+                        <h4 class="font-semibold text-space-brown text-sm">The Name of the Wind</h4>
+                        <p class="text-warm-brown text-xs opacity-75">Patrick Rothfuss</p>
+                    </div>
+
+                    <!-- Book 2 -->
+                    <div class="text-center group">
+                        <div class="h-32 bg-gradient-to-br from-salmon to-rose-red rounded-xl mb-3 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
+                            <span class="text-white font-bold text-2xl">🌟</span>
+                        </div>
+                        <h4 class="font-semibold text-space-brown text-sm">Dune</h4>
+                        <p class="text-warm-brown text-xs opacity-75">Frank Herbert</p>
+                    </div>
+
+                    <!-- Book 3 -->
+                    <div class="text-center group">
+                        <div class="h-32 bg-gradient-to-br from-space-pink-dark to-space-red rounded-xl mb-3 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
+                            <span class="text-white font-bold text-2xl">✨</span>
+                        </div>
+                        <h4 class="font-semibold text-space-brown text-sm">The Priory of the Orange Tree</h4>
+                        <p class="text-warm-brown text-xs opacity-75">Samantha Shannon</p>
+                    </div>
+
+                    <!-- Book 4 -->
+                    <div class="text-center group">
+                        <div class="h-32 bg-gradient-to-br from-rose-red to-space-red rounded-xl mb-3 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
+                            <span class="text-white font-bold text-2xl">🚀</span>
+                        </div>
+                        <h4 class="font-semibold text-space-brown text-sm">The Martian</h4>
+                        <p class="text-warm-brown text-xs opacity-75">Andy Weir</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 bg-gradient-to-r from-space-brown to-warm-brown text-cream-light py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg opacity-90 mb-2">✨ Keep reading, keep growing! ✨</p>
+            <p class="opacity-70">&copy; 2025 My Book Space. Where stories find their space.</p>
+        </div>
+    </footer>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto transform scale-95 transition-all duration-300" id="modalContent">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-space-brown font-serif">Edit Profile</h2>
+                <button id="closeModal" class="text-warm-brown hover:text-space-red transition-colors p-2 rounded-full hover:bg-cream-light">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Profile Picture Section -->
+            <div class="text-center mb-8">
+                <div class="relative inline-block">
+                    <div class="profile-avatar w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white text-4xl">👤</span>
+                    </div>
+                    <button class="absolute -bottom-2 -right-2 w-10 h-10 bg-space-red rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-warm-brown text-sm">Click the camera icon to change your profile picture</p>
+            </div>
+
+            <!-- Form -->
+            <form id="editProfileForm" class="space-y-6">
+                <!-- Username -->
+                <div>
+                    <label class="block text-space-brown font-semibold mb-2">Username</label>
+                    <input type="text" id="usernameModal"
+                           class="w-full px-4 py-3 rounded-2xl border-2 border-cream-medium focus:border-salmon focus:outline-none transition-colors bg-cream-light">
+                </div>
+
+                <!-- Bio -->
+                <div>
+                    <label class="block text-space-brown font-semibold mb-2">About Me</label>
+                    <textarea id="bioModal" rows="4" 
+                              class="w-full px-4 py-3 rounded-2xl border-2 border-cream-medium focus:border-salmon focus:outline-none transition-colors bg-cream-light resize-none"
+                              placeholder="Tell us about yourself and your reading interests...">📖 Passionate reader exploring worlds through words. Currently obsessed with psychological thrillers and fantasy epics. Always up for a good book recommendation!</textarea>
+                    <div class="text-right text-sm text-warm-brown opacity-75 mt-1">
+                        <span id="charCount">187</span>/300
+                    </div>
+                </div>
+
+                <!-- Favorite Genre -->
+                <div>
+                    <label class="block text-space-brown font-semibold mb-2">Favorite Genre</label>
+                    <select id="favoriteGenreModal" 
+                            class="w-full px-4 py-3 rounded-2xl border-2 border-cream-medium focus:border-salmon focus:outline-none transition-colors bg-cream-light">
+                        <option value="fantasy">✨ Fantasy & Sci-Fi</option>
+                        <option value="mystery">🔍 Mystery & Thriller</option>
+                        <option value="romance">💕 Romance</option>
+                        <option value="literary">📚 Literary Fiction</option>
+                        <option value="nonfiction">📖 Non-Fiction</option>
+                        <option value="biography">👤 Biography & Memoir</option>
+                        <option value="history">🏛️ History</option>
+                        <option value="young-adult">🌟 Young Adult</option>
+                        <option value="horror">👻 Horror</option>
+                        <option value="poetry">🎭 Poetry</option>
+                    </select>
+                </div>
+
+                <!-- Reading Goals -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-space-brown font-semibold mb-2">2025 Reading Goal</label>
+                        <input type="number" id="readingGoalModal" value="60" min="1" max="365"
+                               class="w-full px-4 py-3 rounded-2xl border-2 border-cream-medium focus:border-salmon focus:outline-none transition-colors bg-cream-light">
+                    </div>
+                    <div>
+                        <label class="block text-space-brown font-semibold mb-2">Favorite Author</label>
+                        <input type="text" id="favoriteAuthorModal" value="Brandon Sanderson" 
+                               class="w-full px-4 py-3 rounded-2xl border-2 border-cream-medium focus:border-salmon focus:outline-none transition-colors bg-cream-light">
+                    </div>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="bg-gradient-to-r from-cream-light to-ivory rounded-2xl p-6">
+                    <h3 class="text-space-brown font-semibold mb-4 font-serif">Privacy Settings</h3>
+                    <div class="space-y-4">
+                        <label class="flex items-center justify-between">
+                            <span class="text-warm-brown">Public Reading List</span>
+                            <div class="relative">
+                                <input type="checkbox" id="publicReadingList" checked class="sr-only">
+                                <div class="toggle-bg w-12 h-6 bg-cream-medium rounded-full cursor-pointer transition-colors">
+                                    <div class="toggle-dot w-5 h-5 bg-white rounded-full shadow-md transform transition-transform translate-x-6"></div>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <span class="text-warm-brown">Show Reading Progress</span>
+                            <div class="relative">
+                                <input type="checkbox" id="showProgress" checked class="sr-only">
+                                <div class="toggle-bg w-12 h-6 bg-cream-medium rounded-full cursor-pointer transition-colors">
+                                    <div class="toggle-dot w-5 h-5 bg-white rounded-full shadow-md transform transition-transform translate-x-6"></div>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <span class="text-warm-brown">Friend Recommendations</span>
+                            <div class="relative">
+                                <input type="checkbox" id="friendRecs" checked class="sr-only">
+                                <div class="toggle-bg w-12 h-6 bg-cream-medium rounded-full cursor-pointer transition-colors">
+                                    <div class="toggle-dot w-5 h-5 bg-white rounded-full shadow-md transform transition-transform translate-x-6"></div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                    <button type="submit" 
+                            class="flex-1 bg-space-red text-white px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg animate-glow">
+                        Save Changes
+                    </button>
+                    <button type="button" id="cancelEdit"
+                            class="flex-1 bg-white text-space-red px-8 py-4 rounded-full font-semibold border-2 border-space-red hover:bg-cream-light transition-all transform hover:scale-105 shadow-lg">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

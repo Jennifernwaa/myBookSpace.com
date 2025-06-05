@@ -68,7 +68,8 @@
                 rgba(241, 236, 228, 0.98) 0%, 
                 rgba(232, 226, 213, 0.95) 100%);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(203, 118, 102, 0.3);
+            border-bottom: 2px solid rgba(203, 118, 102, 0.3);
+            box-shadow: 0 4px 20px rgba(57, 19, 6, 0.1);
         }
         
         .tab-button {
@@ -185,16 +186,16 @@
     <div class="floating-book floating-book-3 text-4xl">📝</div>
 
     <!-- Navigation -->
-    <nav class="cosmic-nav shadow-lg sticky top-0 z-50">
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-8">
-                    <h1 class="text-2xl font-bold font-serif text-space-brown">myBookSpace 📚</h1>
+                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">
+                        <a href="dashboard.html" >myBookSpace</a></h1>
                     <div class="hidden md:flex space-x-6">
-                        <a href="dashboard.html" class="text-warm-brown hover:text-rose-red transition-all duration-300">Dashboard</a>
-                        <a href="#" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all">My Books</a>
-                        <a href="#" class="text-warm-brown hover:text-rose-red transition-all duration-300">Friends</a>
-                        <a href="#" class="text-warm-brown hover:text-rose-red transition-all duration-300">Recommendations</a>
+                        <a href="mybooks.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-3 py-2">My Books</a>
+                        <a href="friends.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Friends & Feed</a>
+                        <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Recommendations</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -202,9 +203,9 @@
                         <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
                             <span class="text-white text-sm font-semibold">👤</span>
                         </div>
-                        <span class="text-space-brown font-medium">Reader</span>
+                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span>
                     </div>
-                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light">
+                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
                         Logout
                     </button>
                 </div>
@@ -215,21 +216,17 @@
     <!-- Mobile Navigation -->
     <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
         <div class="flex justify-around py-3">
-            <a href="dashboard.html" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">📊</span>
-                <span class="text-xs">Dashboard</span>
-            </a>
-            <a href="#" class="flex flex-col items-center p-2 text-rose-red">
-                <span class="text-xl mb-1">📚</span>
-                <span class="text-xs font-medium">My Books</span>
+            <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs font-medium">Dashboard</span>
             </a>
             <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">👥</span>
-                <span class="text-xs">Friends</span>
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Friends & Feed</span>
             </a>
             <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">🌟</span>
-                <span class="text-xs">Recs</span>
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Recommendations</span>
             </a>
         </div>
     </div>

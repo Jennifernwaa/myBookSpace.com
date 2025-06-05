@@ -245,20 +245,23 @@
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-8">
-                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">myBookSpace 📚</h1>
+                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">
+                        <a href="dashboard.html" >myBookSpace</a></h1>
                     <div class="hidden md:flex space-x-6">
-                        <a href="dashboard.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-3 py-2">Dashboard</a>
+                        <a href="mybooks.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">My Books</a>
                         <a href="friends.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Friends & Feed</a>
                         <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Recommendations</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <!-- Start of Profile -->
                     <div class="hidden md:flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
+                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg"><a href="profile.html">
                             <span class="text-white text-sm font-semibold">👤</span>
                         </div>
-                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span>
+                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span></a>
                     </div>
+                    <!-- End of Profile -->
                     <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
                         Logout
                     </button>
@@ -271,20 +274,16 @@
     <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
         <div class="flex justify-around py-3">
             <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
-                <span class="text-xl mb-1">📊</span>
+                <span class="text-xl mb-1"></span>
                 <span class="text-xs font-medium">Dashboard</span>
             </a>
             <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">📚</span>
-                <span class="text-xs">My Books</span>
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Friends & Feed</span>
             </a>
             <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">👥</span>
-                <span class="text-xs">Friends</span>
-            </a>
-            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1">🌟</span>
-                <span class="text-xs">Recs</span>
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Recommendations</span>
             </a>
         </div>
     </div>
@@ -369,7 +368,7 @@
             <div class="glass-card rounded-3xl p-8">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-3xl font-semibold text-space-brown font-serif">Continue Your Journey</h2>
-                    <a href="#" class="text-salmon hover:text-rose-red transition-colors font-medium text-lg flex items-center">
+                    <a href="mybooks.html" class="text-salmon hover:text-rose-red transition-colors font-medium text-lg flex items-center">
                         View All Books 
                         <span class="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
                     </a>

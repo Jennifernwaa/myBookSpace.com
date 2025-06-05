@@ -342,7 +342,81 @@
           </div>
       </footer>
 
-      <script>
+      <script type="module">
+        // Firebase imports
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+import { getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, where, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+// Your Firebase config
+const firebaseConfig = {
+    apiKey: "AIzaSyDn04LCckI_-sxQvHe4frnheCcvQSa6gCc",
+    authDomain: "mybookspace-jennifer.firebaseapp.com",
+    projectId: "mybookspace-jennifer",
+    storageBucket: "mybookspace-jennifer.firebasestorage.app",
+    messagingSenderId: "842011822044",
+    appId: "1:842011822044:web:d801617e044c86be98f119",
+    measurementId: "G-S48BPR0TDX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;   
+let userBooks = []; 
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "/login-signup/login.html"
+        return;
+    }
+    currentUser = user;
+    const navUserName = document.getElementById('nav-user-name');
+
+    // Fetch current user's friends object
+    const currentUserRef = doc(db, "users", currentUser.uid);
+    const currentUserSnap = await getDoc(currentUserRef);
+    const currentUserData = currentUserSnap.data();
+
+    if (navUserName && navUserName.textContent === 'Reader') {
+        navUserName.textContent = currentUserData.userName || 'Reader';
+    }
+
+    // Fetch user's books for personalized recommendations
+    await fetchUserBooks();
+});
+
+async function fetchUserBooks() {
+    if (!currentUser) return;
+        try {
+            const booksRef = collection(db, "users", currentUser.uid, "books");
+            const booksSnap = await getDocs(booksRef);
+            
+            userBooks = [];
+            booksSnap.forEach(doc => {
+                const data = doc.data();
+                if (data.title) {
+                    userBooks.push(`${data.title} by ${data.author || 'Unknown Author'}`);
+                }
+            });
+            
+            console.log("Fetched user books:", userBooks);
+            
+            // Update UI to show user's book count
+            if (userBooks.length > 0) {
+                const heroText = document.querySelector('main p');
+                if (heroText) {
+                    heroText.innerHTML = `We found ${userBooks.length} books in your library! Our AI will use these along with your preferences to find perfect recommendations just for you.`;
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching user books:", error);
+        }
+}
+
           document.getElementById("recommendBtn").addEventListener("click", async () => {
               const userInput = document.getElementById("userInput").value.trim();
               const btnText = document.getElementById("btnText");
@@ -354,170 +428,179 @@
                   return;
               }
 
-              // Show loading state
-              btnText.classList.add("hidden");
-              btnLoader.classList.remove("hidden");
-              recommendBtn.disabled = true;
-              recommendBtn.classList.add("opacity-75");
+           // Show loading state
+            btnText.classList.add("hidden");
+            btnLoader.classList.remove("hidden");
+            recommendBtn.disabled = true;
+            recommendBtn.classList.add("opacity-75");
 
-              const resultsContainer = document.getElementById("results");
-              resultsContainer.innerHTML = `
-                  <div class="text-center py-12">
-                      <div class="inline-block animate-pulse-gentle">
-                          <div class="text-6xl mb-4">🤖</div>
-                          <p class="text-xl text-space-brown">Our AI is finding perfect books for you<span class="loading-dots"></span></p>
-                      </div>
-                  </div>
-              `;
+            const resultsContainer = document.getElementById("results");
+            resultsContainer.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="inline-block animate-pulse-gentle">
+                        <div class="text-6xl mb-4">🤖</div>
+                        <p class="text-xl text-space-brown">Our AI is finding perfect books for you<span class="loading-dots"></span></p>
+                    </div>
+                </div>
+            `;
 
-              try {
-                  const response = await fetch("/api/groq", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                          userInput: userInput
-                      })
-                  });
+            try {
+                const response = await fetch("/api/groq", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userInput: userInput,
+                        userBooks: userBooks
+                    })
+                });
 
-                  if (!response.ok) {
-                      const errorBody = await response.text();
-                      console.error("API Error Response Body:", errorBody);
-                      throw new Error(`HTTP error! status: ${response.status}`);
-                  }
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    console.error("API Error Response Body:", errorBody);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-                  const data = await response.json();
-                  const messageContent = data.choices[0].message.content.trim();
+                const data = await response.json();
+                const messageContent = data.choices[0].message.content.trim();
 
-                  let parsedResponse;
-                  try {
-                      parsedResponse = JSON.parse(messageContent);
-                      console.log("AI raw response message content:", messageContent);
-                      console.log("AI parsed response object:", parsedResponse);
+                let parsedResponse;
+                try {
+                    parsedResponse = JSON.parse(messageContent);
+                    console.log("AI raw response message content:", messageContent);
+                    console.log("AI parsed response object:", parsedResponse);
 
-                      const books = parsedResponse.books;
+                    const books = parsedResponse.books;
 
-                      if (!Array.isArray(books)) {
-                          throw new Error("AI response did not contain a valid 'books' array.");
-                      }
+                    if (!Array.isArray(books)) {
+                        throw new Error("AI response did not contain a valid 'books' array.");
+                    }
 
-                      displayResults(books);
+                    displayResults(books);
 
-                  } catch (e) {
-                      showError("Couldn't understand AI response. Please try again or refine your input! 🤔");
-                      console.error("Error parsing JSON or invalid structure from AI:", e);
-                      console.log("Raw AI response content that failed to parse/process:", messageContent);
-                      return;
-                  }
+                } catch (e) {
+                    showError("Couldn't understand AI response. Please try again or refine your input! 🤔");
+                    console.error("Error parsing JSON or invalid structure from AI:", e);
+                    console.log("Raw AI response content that failed to parse/process:", messageContent);
+                    return;
+                }
 
-              } catch (error) {
-                  showError(`Failed to get recommendations: ${error.message}. Please try again! 😅`);
-                  console.error("Fetch or API error:", error);
-              } finally {
-                  // Reset button state
-                  btnText.classList.remove("hidden");
-                  btnLoader.classList.add("hidden");
-                  recommendBtn.disabled = false;
-                  recommendBtn.classList.remove("opacity-75");
-              }
-          });
+            } catch (error) {
+                showError(`Failed to get recommendations: ${error.message}. Please try again! 😅`);
+                console.error("Fetch or API error:", error);
+            } finally {
+                // Reset button state
+                btnText.classList.remove("hidden");
+                btnLoader.classList.add("hidden");
+                recommendBtn.disabled = false;
+                recommendBtn.classList.remove("opacity-75");
+            }
+        });
 
-          function displayResults(books) {
-              const resultsContainer = document.getElementById("results");
-              
-              if (books.length === 0) {
-                  resultsContainer.innerHTML = `
-                      <div class="text-center py-12">
-                          <div class="text-6xl mb-4">📚</div>
-                          <p class="text-xl text-gray-600">No book recommendations found. Try describing different genres or authors! 🤓</p>
-                      </div>
-                  `;
-                  return;
-              }
+        function displayResults(books) {
+            const resultsContainer = document.getElementById("results");
+            
+            if (books.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-6xl mb-4">📚</div>
+                        <p class="text-xl text-gray-600">No book recommendations found. Try describing different genres or authors! 🤓</p>
+                    </div>
+                `;
+                return;
+            }
 
-              resultsContainer.innerHTML = `
-                  <div class="text-center mb-8 animate-fade-in">
-                      <h2 class="text-3xl font-bold text-space-brown mb-2">Your Personalized Recommendations</h2>
-                      <p class="text-gray-600">Found ${books.length} perfect ${books.length === 1 ? 'match' : 'matches'} for you! ✨</p>
-                  </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                      ${books.map((book, index) => `
-                          <div class="book-card rounded-2xl p-6 shadow-lg animate-slide-up" style="animation-delay: ${index * 0.1}s">
-                              <div class="mb-4">
-                                  <h3 class="text-xl font-bold text-space-brown mb-2 leading-tight">
-                                      ${book.title || 'Unknown Title'}
-                                  </h3>
-                                  <p class="text-space-red font-semibold">
-                                      by ${book.author || 'Unknown Author'}
-                                  </p>
-                              </div>
-                              
-                              <p class="text-gray-700 mb-6 leading-relaxed">
-                                  ${book.description || 'No description available.'}
-                              </p>
-                              
-                              <div class="flex flex-col sm:flex-row gap-3">
-                                  <button 
-                                      class="flex-1 bg-space-red text-white px-4 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-space-red focus:ring-opacity-30"
-                                      onclick="addToShelf('${(book.title || '').replace(/'/g, "\\'")}', '${(book.author || '').replace(/'/g, "\\'")}')"
-                                  >
-                                      📚 Add to Shelf
-                                  </button>
-                                  <button 
-                                      class="flex-1 bg-white text-space-red px-4 py-3 rounded-lg font-semibold border-2 border-space-red hover:bg-space-pink-light transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-space-red focus:ring-opacity-30"
-                                      onclick="searchBook('${(book.title || '').replace(/'/g, "\\'")}', '${(book.author || '').replace(/'/g, "\\'")}')"
-                                  >
-                                      🔍 Learn More
-                                  </button>
-                              </div>
-                          </div>
-                      `).join('')}
-                  </div>
-              `;
-          }
+            resultsContainer.innerHTML = `
+                <div class="text-center mb-8 animate-fade-in">
+                    <h2 class="text-3xl font-bold text-space-brown mb-2">Your Personalized Recommendations</h2>
+                    <p class="text-gray-600">Found ${books.length} perfect ${books.length === 1 ? 'match' : 'matches'} for you! ✨</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${books.map((book, index) => `
+                        <div class="book-card rounded-2xl p-6 shadow-lg animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                            <div class="mb-4">
+                                <h3 class="text-xl font-bold text-space-brown mb-2 leading-tight">
+                                    ${book.title || 'Unknown Title'}
+                                </h3>
+                                <p class="text-space-red font-semibold">
+                                    by ${book.author || 'Unknown Author'}
+                                </p>
+                            </div>
+                            
+                            <p class="text-gray-700 mb-6 leading-relaxed">
+                                ${book.description || 'No description available.'}
+                            </p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button 
+                                    class="flex-1 bg-space-red text-white px-4 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-space-red focus:ring-opacity-30"
+                                    onclick="addToShelf('${(book.title || '').replace(/'/g, "\\'")}', '${(book.author || '').replace(/'/g, "\\'")}')"
+                                >
+                                    📚 Add to Shelf
+                                </button>
+                                <button 
+                                    class="flex-1 bg-white text-space-red px-4 py-3 rounded-lg font-semibold border-2 border-space-red hover:bg-space-pink-light transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-space-red focus:ring-opacity-30"
+                                    onclick="searchBook('${(book.title || '').replace(/'/g, "\\'")}', '${(book.author || '').replace(/'/g, "\\'")}')"
+                                >
+                                    🔍 Learn More
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
 
-          function showError(message) {
-              const resultsContainer = document.getElementById("results");
-              resultsContainer.innerHTML = `
-                  <div class="text-center py-12">
-                      <div class="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-2xl mx-auto">
-                          <div class="text-4xl mb-4">😅</div>
-                          <p class="text-red-700 text-lg">${message}</p>
-                      </div>
-                  </div>
-              `;
-          }
+        function showError(message) {
+            const resultsContainer = document.getElementById("results");
+            resultsContainer.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-2xl mx-auto">
+                        <div class="text-4xl mb-4">😅</div>
+                        <p class="text-red-700 text-lg">${message}</p>
+                    </div>
+                </div>
+            `;
+        }
 
-          function addToShelf(title, author) {
-              // TODO: Implement add to shelf functionality
-              // For now, show a success message
-              const notification = document.createElement('div');
-              notification.innerHTML = `
-                  <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up">
-                      ✅ "${title}" added to your shelf!
-                  </div>
-              `;
-              document.body.appendChild(notification);
-              
-              setTimeout(() => {
-                  notification.remove();
-              }, 3000);
-              
-              console.log(`Adding to shelf: ${title} by ${author}`);
-          }
+        // Make functions globally available for onclick handlers
+        window.addToShelf = function(title, author) {
+            // TODO: Implement add to shelf functionality
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up">
+                    ✅ "${title}" added to your shelf!
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+            
+            console.log(`Adding to shelf: ${title} by ${author}`);
+        };
 
-          function searchBook(title, author) {
-              // TODO: Implement Google Books API search
-              // For now, open a Google search
-              const searchQuery = encodeURIComponent(`${title} ${author} book`);
-              window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
-          }
+        window.searchBook = function(title, author) {
+            const searchQuery = encodeURIComponent(`${title} ${author} book`);
+            window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
+        };
 
-          // Add enter key support for textarea
-          document.getElementById("userInput").addEventListener("keydown", function(event) {
-              if (event.key === "Enter" && event.ctrlKey) {
-                  document.getElementById("recommendBtn").click();
-              }
-          });
+        // Add enter key support for textarea
+        document.getElementById("userInput").addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && event.ctrlKey) {
+                document.getElementById("recommendBtn").click();
+            }
+        });
+
+        // Logout functionality
+        document.getElementById("logout").addEventListener("click", async () => {
+            try {
+                await signOut(auth);
+                window.location.href = "../login.html";
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
       </script>
   </body>
 </html>

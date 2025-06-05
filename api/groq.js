@@ -1,35 +1,6 @@
 import { Groq } from "groq-sdk";
-// Firebase imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-// Your Firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyDn04LCckI_-sxQvHe4frnheCcvQSa6gCc",
-    authDomain: "mybookspace-jennifer.firebaseapp.com",
-    projectId: "mybookspace-jennifer",
-    storageBucket: "mybookspace-jennifer.firebasestorage.app",
-    messagingSenderId: "842011822044",
-    appId: "1:842011822044:web:d801617e044c86be98f119",
-    measurementId: "G-S48BPR0TDX"
-};
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let currentUser = null;
-
-// Wait for auth before enabling search
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        currentUser = user;
-    } else {
-        alert("Please log in to add books.");
-        window.location.href = "../login.html";
-    }
-});
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -37,28 +8,13 @@ export default async function handler(req, res) {
   }
 
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-  const { userInput } = req.body;
+  const { userInput, userBooks } = req.body;
 
-  if (!userInput) {
+  if (!userInput && (!userBooks || userBooks.length === 0)) {
     return res.status(400).json({ error: "User input is required." });
   }
 
   try {
-    // Fetch user's books and genres from Firestore
-    const booksSnap = await db.collection("users").doc(currentUser.uid).collection("books").get();
-    const userBooks = [];
-    const userGenres = new Set();
-
-    booksSnap.forEach(doc => {
-      const data = doc.data();
-      if (data.title) userBooks.push(data.title);
-    });
-
-    // If user has no books, fallback to userInput or error
-    if (userBooks.length === 0 && !userInput) {
-      return res.status(400).json({ error: "No reading history found. Please add books or provide preferences." });
-    }
-
     // ------ START PROMPT --------
     let fullPrompt = "";
     if (userBooks.length > 0) {

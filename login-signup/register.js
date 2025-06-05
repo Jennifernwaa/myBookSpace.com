@@ -1,7 +1,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
-import { getAuth, createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js"
+import { getAuth, createUserWithEmailAndPassword, updateProfile} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,6 +28,7 @@ const registerButton = document.getElementById("registerButton");
 registerButton.addEventListener("click", (e) => {
     e.preventDefault();
 
+    const fullName = document.getElementById("fullName").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
@@ -39,9 +40,8 @@ registerButton.addEventListener("click", (e) => {
     if(isVerified) {
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            // Signed up 
             const user = userCredential.user;
-            // ...
+
             window.alert("Success! Account created.");
             window.location.href = '../pages/dashboard.html';
         })

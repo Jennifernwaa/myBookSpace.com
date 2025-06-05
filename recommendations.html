@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Get personalized AI-powered book recommendations based on your favorite genres and authors."/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script type="module" src="recommendation.js"></script> -->
     <title>AI Book Recommendations - My Book Space</title>
 
     <!--Colour Palette-->
@@ -17,12 +18,22 @@
               'space-pink-dark': '#F8CCD3',
               'space-red': '#AB2945',
               'space-brown': '#391306',
-              'green': '#C9C7BF',
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
             },
             animation: {
               'fade-in': 'fadeIn 0.6s ease-in-out',
               'slide-up': 'slideUp 0.5s ease-out',
               'pulse-gentle': 'pulse-gentle 2s infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'twinkle': 'twinkle 2s infinite',
+              'orbit': 'orbit 20s linear infinite',
+              'neural-pulse': 'neural-pulse 3s ease-in-out infinite',
             },
             keyframes: {
               fadeIn: {
@@ -36,6 +47,22 @@
               'pulse-gentle': {
                 '0%, 100%': { transform: 'scale(1)' },
                 '50%': { transform: 'scale(1.02)' }
+              },
+               float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-20px)' }
+              },
+              twinkle: {
+                '0%, 100%': { opacity: '0.3' },
+                '50%': { opacity: '1' }
+              },
+              orbit: {
+                '0%': { transform: 'rotate(0deg) translateX(100px) rotate(0deg)' },
+                '100%': { transform: 'rotate(360deg) translateX(100px) rotate(-360deg)' }
+              },
+              'neural-pulse': {
+                '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                '50%': { opacity: '0.8', transform: 'scale(1.1)' }
               }
             }
           }
@@ -46,19 +73,25 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body { font-family: 'Poppins', sans-serif; 
+                overflow-x: hidden;}
+
         h1, h2, h3 { font-family: 'Lora', serif; }
         
         .book-card {
           transition: all 0.3s ease;
-          background: linear-gradient(135deg, #F8CCD3 0%, #F1CED4 100%);
+          background: linear-gradient(135deg, rgba(248, 204, 211, 0.9) 0%, rgba(241, 206, 212, 0.9) 100%);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        
         
         .book-card:hover {
           transform: translateY(-8px);
-          box-shadow: 0 20px 40px rgba(171, 41, 69, 0.15);
+          box-shadow: 0 20px 40px rgba(171, 41, 69, 0.2);
+          background: linear-gradient(135deg, rgba(248, 204, 211, 0.95) 0%, rgba(241, 206, 212, 0.95) 100%);
         }
         
         .input-focus:focus {
@@ -70,6 +103,15 @@
           content: '';
           animation: loading-dots 1.5s infinite;
         }
+        .cosmic-nav {
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.98) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(203, 118, 102, 0.3);
+            box-shadow: 0 4px 20px rgba(57, 19, 6, 0.1);
+
+        }
         
         @keyframes loading-dots {
           0%, 20% { content: ''; }
@@ -77,28 +119,179 @@
           60% { content: '..'; }
           80%, 100% { content: '...'; }
         }
+
+        @media (max-width: 768px) {
+            .floating-book { display: none; }
+            nav.cosmic-nav {
+            display: block !important;
+            }
+            .md\:hidden {
+            display: block !important;
+            }
+        }
+        @media (min-width: 768px) {
+            .md\:hidden {
+                display: none !important;
+            }
+        }
         
-        .gradient-bg {
-          background: linear-gradient(135deg, #F1CED4 0%, #F8CCD3 50%, #C9C7BF 100%);
+        /* Cosmic AI Background */
+        .cosmic-bg {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: -1;
+          background: radial-gradient(ellipse at center, 
+            rgba(247, 245, 240, 1) 0%,
+            rgba(232, 226, 213, 0.95) 30%,
+            rgba(248, 204, 211, 0.7) 60%,
+            rgba(171, 41, 69, 0.6) 85%,
+            rgba(57, 19, 84, 0.8) 100%
+          );
+        }
+        
+        /* Floating Stars */
+        .star {
+          position: absolute;
+          background: radial-gradient(circle, rgba(248, 204, 211, 0.8) 0%, rgba(171, 41, 69, 0.4) 100%);
+          border-radius: 50%;
+          animation: twinkle 2s infinite;
+        }
+        
+        .star-1 { width: 3px; height: 3px; top: 20%; left: 10%; animation-delay: 0s; }
+        .star-2 { width: 2px; height: 2px; top: 30%; left: 80%; animation-delay: 0.5s; }
+        .star-3 { width: 4px; height: 4px; top: 60%; left: 20%; animation-delay: 1s; }
+        .star-4 { width: 2px; height: 2px; top: 80%; left: 70%; animation-delay: 1.5s; }
+        .star-5 { width: 3px; height: 3px; top: 15%; left: 60%; animation-delay: 2s; }
+        .star-6 { width: 2px; height: 2px; top: 70%; left: 40%; animation-delay: 0.3s; }
+        .star-7 { width: 3px; height: 3px; top: 40%; left: 90%; animation-delay: 1.2s; }
+        .star-8 { width: 4px; height: 4px; top: 90%; left: 15%; animation-delay: 0.8s; }
+        
+        /* Neural Network Lines */
+        .neural-network {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          pointer-events: none;
+        }
+        
+        .neural-line {
+          position: absolute;
+          background: linear-gradient(90deg, 
+            rgba(203, 118, 102, 0.2) 0%, 
+            rgba(169, 61, 73, 0.4) 50%, 
+            rgba(203, 118, 102, 0.2) 100%);
+          transform-origin: left center;
+        }
+        
+        .neural-node {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: radial-gradient(circle, rgba(171, 41, 69, 0.8) 0%, rgba(248, 204, 211, 0.4) 100%);
+          border-radius: 50%;
+          animation: neural-pulse 3s ease-in-out infinite;
+          box-shadow: 0 0 15px rgba(171, 41, 69, 0.3);
+        }
+        
+        /* Floating AI Elements */
+        .ai-element {
+          position: absolute;
+          color: rgba(171, 41, 69, 0.3);
+          font-size: 2rem;
+          animation: float 6s ease-in-out infinite;
+          user-select: none;
+          pointer-events: none;
+        }
+        
+        .ai-1 { top: 25%; left: 15%; animation-delay: 0s; }
+        .ai-2 { top: 65%; left: 85%; animation-delay: 2s; }
+        .ai-3 { top: 45%; left: 5%; animation-delay: 4s; }
+        .ai-4 { top: 75%; left: 25%; animation-delay: 1s; }
+        .ai-5 { top: 35%; left: 75%; animation-delay: 3s; }
+        
+        /* Orbiting Elements */
+        .orbit-container {
+          position: absolute;
+          width: 200px;
+          height: 200px;
+        }
+        
+        .orbit-element {
+          position: absolute;
+          width: 6px;
+          height: 6px;
+          background: rgba(203, 118, 102, 0.6);
+          border-radius: 50%;
+          animation: orbit 20s linear infinite;
+        }
+        
+        .orbit-1 { top: 20%; left: 70%; }
+        .orbit-2 { top: 60%; left: 10%; animation-delay: -10s; }
+        
+        /* Glassmorphism Cards */
+        .glass-card {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
     </style>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   </head>
   
   <body class="gradient-bg text-space-brown min-h-screen">
-      <header class="bg-white bg-opacity-90 backdrop-blur-md shadow-sm">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold font-serif"> 
-                <a href="index.html" class="hover:text-space-red transition-colors">myBookSpace 📚</a>
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">myBookSpace 📚</h1>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="/pages/dashboard.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Dashboard</a>
+                        <a href="/pages/friends.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Friends & Feed</a>
+                        <a href="recommendations.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-3 py-2">Recommendations</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-white text-sm font-semibold">👤</span>
+                        </div>
+                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span>
+                    </div>
+                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
+                        Logout
+                    </button>
+                </div>
             </div>
-            <div class="space-x-4">
-                <a href="about.html" class="text-space-red hover:underline transition-all">About</a>
-                <a href="contact.html" class="text-space-red hover:underline transition-all">Contact</a>
-                <a href="login-signup/login.html" class="bg-white text-space-red px-4 py-2 rounded-md font-semibold border border-space-red hover:bg-space-pink-dark transition-colors">Log In</a>
-                <a href="login-signup/register.html" class="bg-space-red text-white px-4 py-2 rounded-md font-semibold hover:bg-opacity-90 transition-opacity">Sign Up</a>
-            </div>
-        </nav>
-      </header>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
+        <div class="flex justify-around py-3">
+            <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
+                <span class="text-xl mb-1">📊</span>
+                <span class="text-xs font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">📚</span>
+                <span class="text-xs">My Books</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">👥</span>
+                <span class="text-xs">Friends</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">🌟</span>
+                <span class="text-xs">Recs</span>
+            </a>
+        </div>
+    </div>
 
       <main class="container mx-auto px-6 py-12">
           <!-- Hero Section -->

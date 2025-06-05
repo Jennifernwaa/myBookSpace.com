@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your book collection - My Book Space">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="mybooks.js"></script>
+    <title>My Books - My Book Space</title>
+
+    <!-- Extended Color Palette -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'space-pink-light': '#F1CED4',
+              'space-pink-dark': '#F8CCD3',
+              'space-red': '#AB2945',
+              'space-brown': '#391306',
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
+            },
+            animation: {
+              'float': 'float 4s ease-in-out infinite',
+              'fade-in-up': 'fadeInUp 0.8s ease-out',
+              'slide-in': 'slideIn 0.5s ease-out',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-8px)' }
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              slideIn: {
+                '0%': { opacity: '0', transform: 'translateX(-20px)' },
+                '100%': { opacity: '1', transform: 'translateX(0)' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #F7F5F0 0%, #F1ECE4 25%, #E8E2D5 60%, #c8a287 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3 { font-family: 'Lora', serif; }
+        
+        .cosmic-nav {
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.98) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(203, 118, 102, 0.3);
+        }
+        
+        .tab-button {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.7) 0%, 
+                rgba(241, 206, 212, 0.3) 100%);
+            border: 1px solid rgba(203, 118, 102, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #EAB996 0%, #CB7666 100%);
+            border-color: #CB7666;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(203, 118, 102, 0.3);
+        }
+        
+        .tab-button:hover:not(.active) {
+            background: linear-gradient(135deg, 
+                rgba(241, 206, 212, 0.4) 0%, 
+                rgba(234, 185, 150, 0.3) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(203, 118, 102, 0.2);
+        }
+        
+        .book-card {
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(241, 236, 228, 0.8) 50%,
+                rgba(241, 206, 212, 0.15) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(203, 118, 102, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .book-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(57, 19, 6, 0.12);
+            border-color: rgba(203, 118, 102, 0.25);
+        }
+        
+        .status-badge {
+            background: linear-gradient(135deg, #F1CED4 0%, #F8CCD3 100%);
+            color: #8B4513;
+            border: 1px solid rgba(203, 118, 102, 0.2);
+        }
+        
+        .status-badge.reading {
+            background: linear-gradient(135deg, #EAB996 0%, #CB7666 100%);
+            color: white;
+        }
+        
+        .status-badge.finished {
+            background: linear-gradient(135deg, #CB7666 0%, #A93D49 100%);
+            color: white;
+        }
+        
+        .edit-button {
+            background: linear-gradient(135deg, #F1ECE4 0%, #E8E2D5 100%);
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            color: #8B4513;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-button:hover {
+            background: linear-gradient(135deg, #EAB996 0%, #CB7666 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .delete-button {
+            background: linear-gradient(135deg, #F1ECE4 0%, #E8E2D5 100%);
+            border: 1px solid rgba(171, 41, 69, 0.2);
+            color: #AB2945;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-button:hover {
+            background: linear-gradient(135deg, #AB2945 0%, #A93D49 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .floating-book {
+            position: fixed;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-book-1 { top: 15%; right: 8%; animation: float 6s ease-in-out infinite; }
+        .floating-book-2 { bottom: 25%; left: 5%; animation: float 8s ease-in-out infinite 2s; }
+        .floating-book-3 { top: 65%; right: 12%; animation: float 7s ease-in-out infinite 4s; }
+        
+        .star-rating {
+            color: #EAB996;
+        }
+        
+        .star-rating.filled {
+            color: #CB7666;
+        }
+        
+        @media (max-width: 768px) {
+            .floating-book { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Background Books -->
+    <div class="floating-book floating-book-1 text-6xl">📚</div>
+    <div class="floating-book floating-book-2 text-5xl">📖</div>
+    <div class="floating-book floating-book-3 text-4xl">📝</div>
+
+    <!-- Navigation -->
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold font-serif text-space-brown">myBookSpace 📚</h1>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="dashboard.html" class="text-warm-brown hover:text-rose-red transition-all duration-300">Dashboard</a>
+                        <a href="#" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all">My Books</a>
+                        <a href="#" class="text-warm-brown hover:text-rose-red transition-all duration-300">Friends</a>
+                        <a href="#" class="text-warm-brown hover:text-rose-red transition-all duration-300">Recommendations</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-white text-sm font-semibold">👤</span>
+                        </div>
+                        <span class="text-space-brown font-medium">Reader</span>
+                    </div>
+                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
+        <div class="flex justify-around py-3">
+            <a href="dashboard.html" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">📊</span>
+                <span class="text-xs">Dashboard</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-rose-red">
+                <span class="text-xl mb-1">📚</span>
+                <span class="text-xs font-medium">My Books</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">👥</span>
+                <span class="text-xs">Friends</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">🌟</span>
+                <span class="text-xs">Recs</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8 max-w-7xl">
+        <!-- Header Section -->
+        <div class="text-center mb-12 animate-fade-in-up">
+            <h1 class="text-4xl md:text-5xl font-bold text-space-brown mb-4 font-serif">
+                My Book Collection
+            </h1>
+            <p class="text-warm-brown text-lg opacity-90 max-w-2xl mx-auto">
+                Organize and track your reading journey. From wishlist to finished reads.
+            </p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="mb-12 animate-slide-in">
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+                <button onclick="switchTab('wantToRead')" id="tab-wantToRead" class="tab-button active px-8 py-4 rounded-2xl font-semibold text-lg transition-all">
+                    <span class="mr-2">📖</span>Want to Read
+                    <span class="ml-2 bg-white bg-opacity-30 rounded-full px-2 py-1 text-sm"></span>
+                </button>
+                <button onclick="switchTab('reading')" id="tab-reading" class="tab-button px-8 py-4 rounded-2xl font-semibold text-lg text-warm-brown transition-all">
+                    <span class="mr-2">📚</span>Currently Reading
+                    <span class="ml-2 bg-white bg-opacity-30 rounded-full px-2 py-1 text-sm"></span>
+                </button>
+                <button onclick="switchTab('finished')" id="tab-finished" class="tab-button px-8 py-4 rounded-2xl font-semibold text-lg text-warm-brown transition-all">
+                    <span class="mr-2">✅</span>Finished
+                    <span class="ml-2 bg-white bg-opacity-30 rounded-full px-2 py-1 text-sm"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Books Grid -->
+        <div id="books-container" class="animate-fade-in-up" style="animation-delay: 0.3s;">
+            <!-- Want to Read Books -->
+            <div id="wantToRead-books" class="books-section">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+            </div>
+
+            <!-- Currently Reading Books -->
+            <div id="reading-books" class="books-section hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Book Card 1 -->
+                    <div class="book-card rounded-3xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-space-brown text-xl mb-2 font-serif">The Seven Husbands of Evelyn Hugo</h3>
+                                <p class="text-warm-brown opacity-75 mb-3">by Taylor Jenkins Reid</p>
+                                <span class="status-badge reading px-3 py-1 rounded-full text-sm font-medium">Currently Reading</span>
+                            </div>
+                            <div class="text-4xl opacity-20">📖</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-warm-brown">Progress</span>
+                                <span class="text-salmon font-semibold">68%</span>
+                            </div>
+                            <div class="w-full bg-cream-medium rounded-full h-2">
+                                <div class="bg-gradient-to-r from-salmon to-rose-red h-2 rounded-full transition-all" style="width: 68%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <span class="text-warm-brown text-sm mr-2">Rating:</span>
+                            <div class="flex">
+                                <span class="star-rating text-lg">☆☆☆☆☆</span>
+                            </div>
+                            <span class="text-warm-brown text-sm ml-2 opacity-75">In progress</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="edit-button flex-1 py-2 px-4 rounded-xl font-medium text-sm">
+                                Edit Status
+                            </button>
+                            <button class="delete-button py-2 px-4 rounded-xl font-medium text-sm">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 2 -->
+                    <div class="book-card rounded-3xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-space-brown text-xl mb-2 font-serif">Atomic Habits</h3>
+                                <p class="text-warm-brown opacity-75 mb-3">by James Clear</p>
+                                <span class="status-badge reading px-3 py-1 rounded-full text-sm font-medium">Currently Reading</span>
+                            </div>
+                            <div class="text-4xl opacity-20">🎯</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-warm-brown">Progress</span>
+                                <span class="text-salmon font-semibold">34%</span>
+                            </div>
+                            <div class="w-full bg-cream-medium rounded-full h-2">
+                                <div class="bg-gradient-to-r from-salmon to-rose-red h-2 rounded-full transition-all" style="width: 34%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <span class="text-warm-brown text-sm mr-2">Rating:</span>
+                            <div class="flex">
+                                <span class="star-rating text-lg">☆☆☆☆☆</span>
+                            </div>
+                            <span class="text-warm-brown text-sm ml-2 opacity-75">In progress</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="edit-button flex-1 py-2 px-4 rounded-xl font-medium text-sm">
+                                Edit Status
+                            </button>
+                            <button class="delete-button py-2 px-4 rounded-xl font-medium text-sm">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finished Books -->
+            <div id="finished-books" class="books-section hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Book Card 1 -->
+                    <div class="book-card rounded-3xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-space-brown text-xl mb-2 font-serif">The Hobbit</h3>
+                                <p class="text-warm-brown opacity-75 mb-3">by J.R.R. Tolkien</p>
+                                <span class="status-badge finished px-3 py-1 rounded-full text-sm font-medium">Finished</span>
+                            </div>
+                            <div class="text-4xl opacity-20">🏔️</div>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <span class="text-warm-brown text-sm mr-2">Rating:</span>
+                            <div class="flex">
+                                <span class="star-rating filled text-lg">★★★★★</span>
+                            </div>
+                            <span class="text-warm-brown text-sm ml-2 font-semibold">5.0</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="edit-button flex-1 py-2 px-4 rounded-xl font-medium text-sm">
+                                Edit Rating
+                            </button>
+                            <button class="delete-button py-2 px-4 rounded-xl font-medium text-sm">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 2 -->
+                    <div class="book-card rounded-3xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-space-brown text-xl mb-2 font-serif">Educated</h3>
+                                <p class="text-warm-brown opacity-75 mb-3">by Tara Westover</p>
+                                <span class="status-badge finished px-3 py-1 rounded-full text-sm font-medium">Finished</span>
+                            </div>
+                            <div class="text-4xl opacity-20">🎓</div>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <span class="text-warm-brown text-sm mr-2">Rating:</span>
+                            <div class="flex">
+                                <span class="star-rating filled text-lg">★★★★☆</span>
+                            </div>
+                            <span class="text-warm-brown text-sm ml-2 font-semibold">4.0</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="edit-button flex-1 py-2 px-4 rounded-xl font-medium text-sm">
+                                Edit Rating
+                            </button>
+                            <button class="delete-button py-2 px-4 rounded-xl font-medium text-sm">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 3 -->
+                    <div class="book-card rounded-3xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-space-brown text-xl mb-2 font-serif">Where the Crawdads Sing</h3>
+                                <p class="text-warm-brown opacity-75 mb-3">by Delia Owens</p>
+                                <span class="status-badge finished px-3 py-1 rounded-full text-sm font-medium">Finished</span>
+                            </div>
+                            <div class="text-4xl opacity-20">🦋</div>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <span class="text-warm-brown text-sm mr-2">Rating:</span>
+                            <div class="flex">
+                                <span class="star-rating filled text-lg">★★★★★</span>
+                            </div>
+                            <span class="text-warm-brown text-sm ml-2 font-semibold">4.8</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="edit-button flex-1 py-2 px-4 rounded-xl font-medium text-sm">
+                                Edit Rating
+                            </button>
+                            <button class="delete-button py-2 px-4 rounded-xl font-medium text-sm">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add New Book Button -->
+        <div class="text-center mt-16">
+            <button class="bg-gradient-to-r from-peach to-salmon text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-salmon hover:to-rose-red transition-all transform hover:scale-105 shadow-lg" onclick="window.location.href='add_books.html'">
+                <span class="mr-2" >➕</span>Add New Book
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 bg-gradient-to-r from-space-brown to-warm-brown text-cream-light py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg opacity-90 mb-2">✨ Every book is a journey waiting to begin ✨</p>
+            <p class="opacity-70">&copy; 2025 My Book Space. Where stories find their space.</p>
+        </div>
+    </footer>
+
+    <!-- Edit Modals -->
+    <!-- Want to Read Edit Modal -->
+    <div id="wantToRead-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-cream-light to-ivory rounded-3xl p-8 max-w-md w-full shadow-2xl border border-salmon/20">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-space-brown font-serif mb-2">Edit Book</h3>
+                <p class="text-warm-brown opacity-75">Update your book's reading status</p>
+            </div>
+            
+            <form class="space-y-6">
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Book Title</label>
+                    <input type="text" id="wtr-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title">
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Author</label>
+                    <input type="text" id="wtr-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name">
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Reading Status</label>
+                    <select id="wtr-status" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors">
+                        <option value="wantToRead">Want to Read</option>
+                        <option value="reading">Currently Reading</option>
+                        <option value="finished">Finished</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-4 mt-8">
+                    <button type="button" onclick="closeModal('wantToRead-modal')" class="flex-1 py-3 px-4 rounded-xl border border-warm-brown/20 text-warm-brown hover:bg-cream-medium transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-peach to-salmon text-white font-semibold hover:from-salmon hover:to-rose-red transition-all">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Currently Reading Edit Modal -->
+    <div id="reading-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-cream-light to-ivory rounded-3xl p-8 max-w-md w-full shadow-2xl border border-salmon/20">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-space-brown font-serif mb-2">Update Reading Progress</h3>
+                <p class="text-warm-brown opacity-75">Track your current reading progress</p>
+            </div>
+            
+            <form class="space-y-6">
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Book Title</label>
+                    <input type="text" id="reading-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title">
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Author</label>
+                    <input type="text" id="reading-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name">
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Reading Progress</label>
+                    <div class="space-y-3">
+                        <input type="range" id="reading-progress" min="0" max="100" value="50" class="w-full h-2 bg-cream-medium rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-sm text-warm-brown">
+                            <span>0%</span>
+                            <span id="progress-display" class="font-semibold text-salmon">50%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Reading Status</label>
+                    <select id="reading-status" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors">
+                        <option value="wantToRead">Want to Read</option>
+                        <option value="reading" selected>Currently Reading</option>
+                        <option value="finished">Finished</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-4 mt-8">
+                    <button type="button" onclick="closeModal('reading-modal')" class="flex-1 py-3 px-4 rounded-xl border border-warm-brown/20 text-warm-brown hover:bg-cream-medium transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-peach to-salmon text-white font-semibold hover:from-salmon hover:to-rose-red transition-all">
+                        Update Progress
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Finished Books Edit Modal -->
+    <div id="finished-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-cream-light to-ivory rounded-3xl p-8 max-w-md w-full shadow-2xl border border-salmon/20">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-space-brown font-serif mb-2">Edit Finished Book</h3>
+                <p class="text-warm-brown opacity-75">Update your rating and review</p>
+            </div>
+            
+            <form class="space-y-6">
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Book Title</label>
+                    <input type="text" id="finished-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title">
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Author</label>
+                    <input type="text" id="finished-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name">
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Your Rating</label>
+                    <div class="flex justify-center space-x-2 mb-2">
+                        <button type="button" class="star-button text-3xl text-salmon/30 hover:text-salmon transition-colors" data-rating="1">★</button>
+                        <button type="button" class="star-button text-3xl text-salmon/30 hover:text-salmon transition-colors" data-rating="2">★</button>
+                        <button type="button" class="star-button text-3xl text-salmon/30 hover:text-salmon transition-colors" data-rating="3">★</button>
+                        <button type="button" class="star-button text-3xl text-salmon/30 hover:text-salmon transition-colors" data-rating="4">★</button>
+                        <button type="button" class="star-button text-3xl text-salmon/30 hover:text-salmon transition-colors" data-rating="5">★</button>
+                    </div>
+                    <p class="text-center text-sm text-warm-brown opacity-75">Click to rate this book</p>
+                    <input type="hidden" id="book-rating" value="0">
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Reading Status</label>
+                    <select id="finished-status" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors">
+                        <option value="wantToRead">Want to Read</option>
+                        <option value="reading">Currently Reading</option>
+                        <option value="finished" selected>Finished</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-warm-brown font-medium mb-2">Personal Notes (Optional)</label>
+                    <textarea id="finished-notes" rows="3" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors resize-none" placeholder="What did you think of this book?"></textarea>
+                </div>
+                
+                <div class="flex gap-4 mt-8">
+                    <button type="button" onclick="closeModal('finished-modal')" class="flex-1 py-3 px-4 rounded-xl border border-warm-brown/20 text-warm-brown hover:bg-cream-medium transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-peach to-salmon text-white font-semibold hover:from-salmon hover:to-rose-red transition-all">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

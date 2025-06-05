@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Add a new book to your personal library - My Book Space">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="add_books.js"></script>
+    <title>Add Book - My Book Space</title>
+
+    <!-- Extended Color Palette -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'space-pink-light': '#F1CED4',
+              'space-pink-dark': '#F8CCD3',
+              'space-red': '#AB2945',
+              'space-brown': '#391306',
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
+            },
+            animation: {
+              'float': 'float 4s ease-in-out infinite',
+              'fade-in-up': 'fadeInUp 0.8s ease-out',
+              'pulse-gentle': 'pulseGentle 3s ease-in-out infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-8px)' }
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              pulseGentle: {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.02)' }
+              },
+              shimmer: {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(100%)' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #F7F5F0 0%, #F1ECE4 25%, #E8E2D5 60%, #F1CED4 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3 { font-family: 'Lora', serif; }
+        
+        .page-gradient-bg {
+            background: linear-gradient(135deg, 
+                rgba(247, 245, 240, 0.95) 0%, 
+                rgba(241, 236, 228, 0.9) 30%,
+                rgba(232, 226, 213, 0.85) 70%,
+                rgba(241, 206, 212, 0.9) 100%);
+            backdrop-filter: blur(20px);
+        }
+        
+        .glass-card {
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(241, 236, 228, 0.85) 50%,
+                rgba(241, 206, 212, 0.2) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(203, 118, 102, 0.2);
+            box-shadow: 0 12px 40px rgba(57, 19, 6, 0.08);
+        }
+        
+        .search-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.98) 0%, 
+                rgba(241, 236, 228, 0.9) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(203, 118, 102, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .search-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(57, 19, 6, 0.1);
+        }
+        
+        .form-card {
+            background: linear-gradient(135deg, 
+                rgba(247, 245, 240, 0.95) 0%, 
+                rgba(241, 236, 228, 0.9) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(203, 118, 102, 0.15);
+        }
+        
+        .input-field {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(203, 118, 102, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            background: rgba(255, 255, 255, 1);
+            border-color: rgba(203, 118, 102, 0.4);
+            box-shadow: 0 0 0 3px rgba(241, 206, 212, 0.3);
+            outline: none;
+        }
+        
+        .search-button {
+            background: linear-gradient(135deg, #EAB996 0%, #CB7666 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+        
+        .search-button:hover::before {
+            left: 100%;
+        }
+        
+        .search-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(203, 118, 102, 0.3);
+        }
+        
+        .save-button {
+            background: linear-gradient(135deg, #A93D49 0%, #AB2945 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(171, 41, 69, 0.3);
+            background: linear-gradient(135deg, #AB2945 0%, #8B2A3A 100%);
+        }
+        
+        .divider-line {
+            background: linear-gradient(90deg, transparent, #CB7666, transparent);
+            height: 1px;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(241, 206, 212, 0.1) 100%);
+            border: 1px solid rgba(203, 118, 102, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(57, 19, 6, 0.12);
+            border-color: rgba(203, 118, 102, 0.3);
+        }
+        
+        .cosmic-nav {
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.98) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(203, 118, 102, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #391306 0%, #8B4513 40%, #A93D49 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(203, 118, 102, 0.3);
+            border-top: 3px solid #CB7666;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .floating-book {
+            position: fixed;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-book-1 { top: 15%; right: 8%; animation: float 6s ease-in-out infinite; }
+        .floating-book-2 { bottom: 25%; left: 5%; animation: float 8s ease-in-out infinite 2s; }
+        
+        @media (max-width: 768px) {
+            .floating-book { display: none; }
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+
+<body>
+    <!-- Floating Background Books -->
+    <div class="floating-book floating-book-1 text-6xl">📚</div>
+    <div class="floating-book floating-book-2 text-5xl">📖</div>
+
+    <!-- Navigation -->
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold font-serif text-space-brown">myBookSpace 📚</h1>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="dashboard.html" class="text-warm-brown hover:text-rose-red transition-all duration-300">Dashboard</a>
+                        <a href="#" class="text-warm-brown hover:text-rose-red transition-all duration-300">My Books</a>
+                        <a href="#" class="text-warm-brown hover:text-rose-red transition-all duration-300">Friends</a>
+                        <a href="#" class="text-warm-brown hover:text-rose-red transition-all duration-300">Recommendations</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="dashboard.html" class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light">
+                        ← Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8 max-w-4xl">
+        <!-- Page Header -->
+        <div class="page-gradient-bg rounded-3xl p-8 mb-12 animate-fade-in-up text-center">
+            <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-4 font-serif">
+                Add a New Book 📖
+            </h1>
+            <p class="text-warm-brown text-lg opacity-90 max-w-2xl mx-auto">
+                Discover your next great read by searching our library, or add your own personal collection manually.
+            </p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-card rounded-3xl p-8 mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <h2 class="text-2xl font-semibold text-space-brown mb-6 font-serif flex items-center">
+                <span class="text-3xl mr-3">🔍</span>
+                Search for a Book
+            </h2>
+            
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Enter book title..."
+                    class="input-field flex-1 px-4 py-3 rounded-xl text-space-brown placeholder-warm-brown placeholder-opacity-60"
+                >
+                <button 
+                    id="searchButton"
+                    class="search-button text-white px-8 py-3 rounded-xl font-semibold flex items-center justify-center space-x-2 min-w-[120px]"
+                >
+                    <span>Search</span>
+                </button>
+            </div>
+
+            <!-- Search Results Area -->
+            <div id="searchResults" class="hidden">
+                <h3 class="text-lg font-semibold text-space-brown mb-4">Search Results:</h3>
+                <div id="resultsContainer" class="space-y-4">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="hidden text-center py-8">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-warm-brown">Searching for books...</p>
+            </div>
+
+            <!-- No Results State -->
+            <div id="noResults" class="hidden text-center py-8">
+                <div class="text-4xl mb-4">😔</div>
+                <p class="text-warm-brown">No books found. Try a different search or add manually below.</p>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="flex items-center my-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <div class="flex-1 divider-line"></div>
+            <span class="px-6 text-warm-brown font-medium bg-cream-light rounded-full py-2">or add manually</span>
+            <div class="flex-1 divider-line"></div>
+        </div>
+
+        <!-- Manual Form Section -->
+        <div class="form-card rounded-3xl p-8 animate-fade-in-up" style="animation-delay: 0.6s;">
+            <h2 class="text-2xl font-semibold text-space-brown mb-6 font-serif flex items-center">
+                <span class="text-3xl mr-3">✍️</span>
+                Add Book Manually
+            </h2>
+            
+            <form id="manualBookForm" class="space-y-6">
+                <!-- Title Field -->
+                <div>
+                    <label for="bookTitle" class="block text-space-brown font-medium mb-2">Book Title *</label>
+                    <input 
+                        type="text" 
+                        id="bookTitle"
+                        name="title"
+                        required
+                        placeholder="Enter the book title..."
+                        class="input-field w-full px-4 py-3 rounded-xl text-space-brown placeholder-warm-brown placeholder-opacity-60"
+                    >
+                </div>
+
+                <!-- Author Field -->
+                <div>
+                    <label for="bookAuthor" class="block text-space-brown font-medium mb-2">Author *</label>
+                    <input 
+                        type="text" 
+                        id="bookAuthor"
+                        name="author"
+                        required
+                        placeholder="Enter the author's name..."
+                        class="input-field w-full px-4 py-3 rounded-xl text-space-brown placeholder-warm-brown placeholder-opacity-60"
+                    >
+                </div>
+
+                <!-- Genre Field -->
+                <div>
+                    <label for="bookGenre" class="block text-space-brown font-medium mb-2">Genre</label>
+                    <select 
+                        id="bookGenre"
+                        name="genre"
+                        class="input-field w-full px-4 py-3 rounded-xl text-space-brown bg-white"
+                    >
+                        <option value="">Select a genre...</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Sci-Fi">Science Fiction</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Biography">Biography</option>
+                        <option value="History">History</option>
+                        <option value="Self-Help">Self-Help</option>
+                        <option value="Business">Business</option>
+                        <option value="Poetry">Poetry</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Status Field -->
+                <div>
+                    <label for="bookStatus" class="block text-space-brown font-medium mb-2">Reading Status *</label>
+                    <select 
+                        id="bookStatus"
+                        name="status"
+                        required
+                        class="input-field w-full px-4 py-3 rounded-xl text-space-brown bg-white"
+                    >
+                        <option value="">Select status...</option>
+                        <option value="wantToRead">Want to Read</option>
+                        <option value="reading">Currently Reading</option>
+                        <option value="finished">Finished</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button 
+                        type="submit"
+                        class="save-button w-full text-white px-8 py-4 rounded-xl font-semibold text-lg flex items-center justify-center space-x-2"
+                    >
+                        <span>📚</span>
+                        <span>Save to Library</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Success Message (Hidden by default) -->
+        <div id="successMessage" class="hidden fixed top-24 right-6 bg-gradient-to-r from-peach to-salmon text-white px-6 py-4 rounded-xl shadow-lg z-50 animate-fade-in-up">
+            <div class="flex items-center space-x-2">
+                <span class="text-xl">✅</span>
+                <span class="font-medium">Book added successfully!</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 bg-gradient-to-r from-space-brown to-warm-brown text-cream-light py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg opacity-90 mb-2">✨ Every book is a new adventure waiting to begin! ✨</p>
+            <p class="opacity-70">&copy; 2025 My Book Space. Where stories find their space.</p>
+        </div>
+    </footer>
+</body>
+</html>

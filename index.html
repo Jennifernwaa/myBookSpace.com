@@ -18,7 +18,37 @@
               'space-pink-dark': '#F8CCD3',
               'space-red': '#AB2945',
               'space-brown': '#391306',
-              'green': '#C9C7BF',
+
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
+            },
+            animation: {
+             'float': 'float 6s ease-in-out infinite',
+              'float-delayed': 'float 6s ease-in-out infinite 2s',
+              'float-delayed-2': 'float 6s ease-in-out infinite 4s',
+              'fade-in-up': 'fadeInUp 1s ease-out',
+              'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+              'twinkle': 'twinkle 2s infinite alternate',
+              'drift': 'drift 20s linear infinite',
+              'bookFloat': 'bookFloat 6s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                '25%': { transform: 'translateY(-20px) rotate(2deg)' },
+                '50%': { transform: 'translateY(-15px) rotate(0deg)' },
+                '75%': { transform: 'translateY(-25px) rotate(-2deg)' }
+              },
+              bounceGentle: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' }
+              }
             }
           }
         }
@@ -32,70 +62,190 @@
     <style>
         body { font-family: 'Poppins', sans-serif; }
         h1, h2, h3 { font-family: 'Lora', serif; }
+        
+        .gradient-bg {
+          background: linear-gradient(135deg, #F7F5F0 0%, #E8E2D5 50%, #D6CDB7 100%);
+        }
+        /* Cozy Cosmic Navigation */
+        .cosmic-nav {
+            background: rgba(241, 236, 228, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(203, 118, 102, 0.3);
+        }   
+
+        /* Main Book Showcase */
+        .book-showcase {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            margin: 3.5rem 0;
+        }
+        
+        .main-book {
+            width: 300px;
+            height: 420px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        
+        .main-book:hover {
+            transform: rotateY(15deg) rotateX(5deg) scale(1.05);
+        }
+        
+        .book-cover, .book-spine {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            background-image: url('images/botw2.jpg');
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 20px 40px rgba(57, 19, 6, 0.4);
+        }
+        
+        .book-spine {
+            transform: rotateY(90deg) translateZ(-10px);
+            width: 20px;
+            background: linear-gradient(135deg, #A93D49, #CB7666);
+        }
+        
+        .book-cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #F1ECE4;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @keyframes bookFloat {
+            0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+            25% { transform: translateY(-15px) rotateZ(2deg); }
+            50% { transform: translateY(-10px) rotateZ(0deg); }
+            75% { transform: translateY(-20px) rotateZ(-2deg); }
+        }
+
+
     </style>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   </head>
   
-  <body class="bg-space-pink-light text-space-brown">
-      <header class="absolute top-0 left-0 w-full z-10 bg-white bg-opacity-90 backdrop-blur-md">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold font-serif"> myBookSpace 📚</div>
+  <body class="space-bg">
+      
+      <!-- Animated Background Elements -->
+      <div class="stars"></div>
+      <div class="nebula"></div>
+        
+      <!-- Floating Planets -->
+      <div class="planet planet-1"></div>
+      <div class="planet planet-2"></div>
+      <div class="planet planet-3"></div>
+      
+      <!-- Floating Books -->
+      <div class="floating-book book-1" style="--url-1: url(images/botw1.jpg)"></div>
+      <div class="floating-book book-2" style="--url-2: url(images/crescent_city_botw.jpg)"></div>
+      <div class="floating-book book-3" style="--url-3: url(images/botw1.jpg)"></div>
+      <div class="floating-book book-4" style="--url-4: url(images/botw1.jpg)"></div>
+
+      <header class="cosmic-nav fixed top-0 w-full z-50 p-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold font-serif"> myBookSpace</div>
             <div class="space-x-4">
-                <a href="about.html" class="text-space-red hover:underline">About</a>
-                <a href="contact.html" class="text-space-red hover:underline">Contact</a>
-                <a href="login-signup/login.html" class="bg-white text-space-red px-4 py-2 rounded-md font-semibold border border-space-red hover:bg-space-pink-dark transition-colors">Log In</a>
-                <a href="login-signup/register.html" class="bg-space-red text-white px-4 py-2 rounded-md font-semibold hover:bg-opacity-90 transition-opacity">Sign Up</a>
+                <a href="about.html" class="text-space-red hover:underline transition-all">About</a>
+                <a href="contact.html" class="text-space-red hover:underline transition-all">Contact</a>
+                <a href="recommendations.html" class="text-space-red hover:underline transition-all">AI Recommendations</a>
+                <a href="login-signup/login.html" class="bg-space-red text-white px-4 py-2 rounded-md font-semibold hover:bg-opacity-90 transition-opacity">Log In</a>
+                <a href="login-signup/register.html" class="bg-white text-space-red px-4 py-2 rounded-md font-semibold border border-space-red hover:bg-cream-medium transition-colors">Sign Up</a>
             </div>
         </nav>
       </header>
 
       <main>
-        <h1>Lets Get Nerdy!</h1>
-          <section class="relative text-center min-h-screen flex items-center justify-center">
+          <section class="relative text-center min-h-screen flex items-center justify-center pt-20">
               <div class="container mx-auto px-6 z-10">
-                  <h1 class="text-5xl md:text-7xl font-bold text-space-brown leading-tight">Where stories find their space.</h1>
-                  <p class="text-lg md:text-xl mt-4 max-w-2xl mx-auto">
-                      Track your reading, organize your digital shelves, and discover your next great read, all in one beautiful app.
-                  </p>
-                  <div class="wrap">
-                      <div class="item">
-                          <p>Crescent City</p>
-                          <img src="images/crescent_city_botw.jpg" alt="">
+                  <div class="animate-fade-in-up">
+                      <h1 class="hero-text text-5xl md:text-7xl font-bold text-space-brown leading-tight mb-6">
+                          Where stories find their 
+                          <span class="text-space-red">space</span>.
+                      </h1>
+                      <p class="text-lg md:text-xl mt-4 max-w-2xl mx-auto text-gray-700 mb-8">
+                          Track your reading, organize your digital shelves, and discover your next great read, all in one beautiful app.
+                      </p>
+                  </div>     
+                  
+                  <!-- Book Showcase -->
+                  <div class="book-showcase fade-in-up" style="animation-delay: 0.6s;">
+                      <div class="main-book">
+                          <div class="book-cover">
+                          </div>
+                          <div class="book-spine"></div>
                       </div>
                   </div>
-                  <div class="mt-8">
-                      <a href="/login-signup/register.html" class="bg-space-red text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-opacity">Get Started for Free</a>
+
+                  <div class="mt-8 animate-fade-in-up" style="animation-delay: 0.6s">
+                      <a href="/login-signup/register.html" class="bg-space-red text-white px-10 py-5 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg">
+                          Start Reading Now!
+                      </a>
                   </div>
-              </div>
+
+                  <!-- Reading Stats -->
+                  <!-- <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto animate-fade-in-up" style="animation-delay: 0.9s">
+                      <div class="text-center p-6 bg-white bg-opacity-50 rounded-xl backdrop-blur-sm">
+                          <div class="text-3xl font-bold text-space-red" id="number_of_books_tracked">50K+</div>
+                          <div class="text-sm text-gray-600">Books Tracked</div>
+                      </div>
+                      <div class="text-center p-6 bg-white bg-opacity-50 rounded-xl backdrop-blur-sm">
+                          <div class="text-3xl font-bold text-space-red" id="number_of_readers">1</div>
+                          <div class="text-sm text-gray-600">Happy Readers</div>
+                      </div>
+                      <div class="text-center p-6 bg-white bg-opacity-50 rounded-xl backdrop-blur-sm">
+                          <div class="text-3xl font-bold text-space-red">99%</div>
+                          <div class="text-sm text-gray-600">Satisfaction Rate</div>
+                      </div>
+                  </div>
+              </div> -->
           </section>
         
           <section id="features" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
-              <h2 class="text-4xl font-bold text-space-brown">All Your Books, Perfectly Organized</h2>
-              <p class="text-lg mt-2 text-gray-600">Everything you need to enhance your reading life.</p>
-              <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="bg-space-pink-dark p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold text-space-red">Track Your Progress</h3>
-                    <p class="mt-4 text-space-brown">Log the books you're currently reading, want to read, and have finished. Never lose your page again.</p>
+              <h2 class="text-4xl font-bold text-space-brown mb-4">All Your Books, Perfectly Organized</h2>
+              <p class="text-lg mt-2 text-gray-600 mb-12">Everything you need to enhance your reading life.</p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="feature-card p-8 rounded-lg shadow-lg">
+                    <div class="text-4xl mb-4">T</div>
+                    <h3 class="text-2xl font-bold text-space-red mb-4">Track Your Progress</h3>
+                    <p class="text-space-brown">Log the books you're currently reading, want to read, and have finished. Never lose your page again.</p>
                 </div>
-                <div class="bg-space-pink-dark p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold text-space-red">Organize Your Shelves</h3>
-                    <p class="mt-4 text-space-brown">Create custom virtual shelves to categorize your books exactly how you like them. Your library, your rules.</p>
+                <div class="feature-card p-8 rounded-lg shadow-lg">
+                    <div class="text-4xl mb-4">O</div>
+                    <h3 class="text-2xl font-bold text-space-red mb-4">Organize Your Shelves</h3>
+                    <p class="text-space-brown">Create custom virtual shelves to categorize your books exactly how you like them. Your library, your rules.</p>
                 </div>
-                <div class="bg-space-pink-dark p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold text-space-red">Get AI Recommendations</h3>
-                    <p class="mt-4 text-space-brown">Tell us your favorite genres or authors, and let our smart AI find hidden gems you're sure to love.</p>
+                <div class="feature-card p-8 rounded-lg shadow-lg">
+                    <div class="text-4xl mb-4">G</div>
+                    <h3 class="text-2xl font-bold text-space-red mb-4">Get AI Recommendations</h3>
+                    <p class="text-space-brown">Tell us your favorite genres or authors, and let our smart AI find hidden gems you're sure to love.</p>
                 </div>
               </div>
             </div>
           </section>
 
-          <section class="bg-space-pink-dark py-20">
+          <section class="cta-section py-20">
               <div class="container mx-auto px-6 text-center">
-                  <h2 class="text-4xl font-bold text-space-brown">Join the Community of Readers</h2>
-                  <p class="text-lg mt-2 text-gray-600 max-w-xl mx-auto">Start building your personal book space today. It’s free and easy to get started.</p>
-                  <div class="mt-8">
-                      <a href="register.html" class="bg-space-red text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-opacity">Sign Up Now</a>
+                  <h2 class="text-4xl font-bold text-space-brown mb-4">Join the Community of Readers</h2>
+                  <p class="text-lg text-gray-700 max-w-xl mx-auto mb-8">Start building your personal book space today. It's free and easy to get started.</p>
+                  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                      <a href="login-signup/register.html" class="bg-space-red text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg">
+                          Sign Up Now
+                      </a>
+                      <a href="recommendations.html" class="bg-white text-space-red px-8 py-4 rounded-lg font-semibold text-lg border-2 border-space-red hover:bg-cream-light transition-all transform hover:scale-105 shadow-lg">
+                          Try AI Recommendations
+                      </a>
                   </div>
               </div>
           </section>
@@ -121,25 +271,46 @@
 
       </main>
 
+      <!-- Book Info Modal -->
+      <div id="bookModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+          <div class="bg-white rounded-2xl p-8 max-w-md mx-auto transform transition-all">
+              <div class="text-center">
+                  <div class="text-4xl mb-4">📖</div>
+                  <h3 id="bookTitle" class="text-2xl font-bold text-space-brown mb-2"></h3>
+                  <p id="bookAuthor" class="text-space-red font-semibold mb-4"></p>
+                  <p class="text-gray-600 mb-6">Click to add this book to your reading list!</p>
+                  <div class="flex gap-4 justify-center">
+                      <button onclick="addToReadingList()" class="bg-space-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
+                          Add to List
+                      </button>
+                      <button onclick="closeModal()" class="bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-400 transition-all">
+                          Close
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
 
     <footer class="bg-space-brown text-white py-8">
       <div class="container mx-auto px-6 text-center">
         <p>&copy; 2025 My Book Space. All Rights Reserved to Jennifer :).</p>
       </div>
     </footer>
+
     <script>
+      
+      let currentBook = {};
+
+      // Existing slider code
       let items = document.querySelectorAll('.item');
-      console.log(items);
       items.forEach(item => {
           item.addEventListener('mousemove', (e)=>{
               let positionPx = e.x - item.getBoundingClientRect().left;
               let positionX = (positionPx / item.offsetWidth) * 100;
-              console.log(positionX, positionPx);
 
-              let positionPy = event.y - item.getBoundingClientRect().top;
+              let positionPy = e.y - item.getBoundingClientRect().top;
               let positionY = (positionPy / item.offsetHeight) * 100;
 
-              
               item.style.setProperty('--rX', (0.5)*(50 - positionY) + 'deg');
               item.style.setProperty('--rY', -(0.5)*(50 - positionX) + 'deg');
           })
@@ -148,6 +319,86 @@
               item.style.setProperty('--rY', '0deg');
           })
       })
+
+      // Book interaction functions
+      function showBookInfo(title, author) {
+          currentBook = { title, author };
+          document.getElementById('bookTitle').textContent = title;
+          document.getElementById('bookAuthor').textContent = `by ${author}`;
+          document.getElementById('bookModal').classList.remove('hidden');
+      }
+
+      function closeModal() {
+          document.getElementById('bookModal').classList.add('hidden');
+      }
+
+      function addToReadingList() {
+          // TODO: Implement actual add to reading list functionality
+          alert(`"${currentBook.title}" has been added to your reading list!`);
+          closeModal();
+      }
+
+      // Close modal when clicking outside
+      document.getElementById('bookModal').addEventListener('click', (e) => {
+          if (e.target.id === 'bookModal') {
+              closeModal();
+          }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+              closeModal();
+          }
+      });
+
+      // Generate random stars
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numStars = 100;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Parallax effect on scroll
+        function parallaxScroll() {
+            const scrolled = window.pageYOffset;
+            document.querySelector('.nebula').style.transform = `rotate(${scrolled * 0.1}deg)`;
+            
+            document.querySelectorAll('.planet').forEach((planet, index) => {
+                const speed = 0.5 + (index * 0.2);
+                planet.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+            
+            document.querySelectorAll('.floating-book').forEach((book, index) => {
+                const speed = 0.3 + (index * 0.1);
+                book.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            window.addEventListener('scroll', parallaxScroll);
+        });
+        
+        // Book hover effect
+        document.querySelector('.main-book').addEventListener('mouseenter', function() {
+            this.style.transform = 'rotateY(15deg) rotateX(5deg) scale(1.05)';
+        });
+        
+        document.querySelector('.main-book').addEventListener('mouseleave', function() {
+            this.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+        });
     </script>
   </body>
 </html>

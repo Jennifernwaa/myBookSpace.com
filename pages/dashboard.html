@@ -8,7 +8,7 @@
     <script type="module" src="dashboard.js"></script>
     <title>Dashboard - My Book Space</title>
 
-    <!-- Color Palette -->
+    <!-- Extended Color Palette -->
     <script>
       tailwind.config = {
         theme: {
@@ -18,7 +18,39 @@
               'space-pink-dark': '#F8CCD3',
               'space-red': '#AB2945',
               'space-brown': '#391306',
-              'green': '#C9C7BF',
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
+            },
+            animation: {
+              'float': 'float 4s ease-in-out infinite',
+              'float-delayed': 'float 4s ease-in-out infinite 1s',
+              'float-delayed-2': 'float 4s ease-in-out infinite 2s',
+              'fade-in-up': 'fadeInUp 0.8s ease-out',
+              'pulse-gentle': 'pulseGentle 3s ease-in-out infinite',
+              'glow': 'glow 2s ease-in-out infinite alternate',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-8px)' }
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              pulseGentle: {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.02)' }
+              },
+              glow: {
+                '0%': { boxShadow: '0 0 20px rgba(171, 41, 69, 0.3)' },
+                '100%': { boxShadow: '0 0 30px rgba(171, 41, 69, 0.5)' }
+              }
             }
           }
         }
@@ -28,81 +60,206 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body { 
             font-family: 'Poppins', sans-serif; 
-            background: linear-gradient(135deg, #F1CED4 0%, #F8CCD3 50%, #ffffff 100%);
+            background: linear-gradient(135deg, #F7F5F0 0%, #F1ECE4 25%, #E8E2D5 50%, #EAB996 75%, #CB7666 100%);
             min-height: 100vh;
-        }
-        h1, h2, h3 { font-family: 'Lora', serif; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .stat-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 204, 211, 0.3) 100%);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(171, 41, 69, 0.1);
-        }
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-        .book-spine {
-            background: linear-gradient(to bottom, #AB2945, #8B1E3A);
             position: relative;
         }
-        .book-spine::before {
+        h1, h2, h3 { font-family: 'Lora', serif; }
+        
+        .hero-gradient-bg {
+            background: linear-gradient(135deg, 
+                rgba(247, 245, 240, 0.95) 0%, 
+                rgba(241, 236, 228, 0.9) 30%,
+                rgba(241, 206, 212, 0.8) 70%,
+                rgba(248, 204, 211, 0.9) 100%);
+            backdrop-filter: blur(20px);
+        }
+        
+        .glass-card {
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(241, 236, 228, 0.85) 50%,
+                rgba(241, 206, 212, 0.3) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(203, 118, 102, 0.2);
+            box-shadow: 0 12px 40px rgba(57, 19, 6, 0.1);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.98) 0%, 
+                rgba(241, 206, 212, 0.15) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(203, 118, 102, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.3);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(241, 206, 212, 0.4), transparent);
+            transition: left 0.6s;
         }
-        .floating-icon {
-            animation: float 3s ease-in-out infinite;
+        
+        .stat-card:hover::before {
+            left: 100%;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+        
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(57, 19, 6, 0.15);
+            border-color: rgba(203, 118, 102, 0.3);
         }
-        .fade-in {
-            animation: fadeIn 0.8s ease-in;
+        
+        .action-button {
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.9) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: linear-gradient(135deg, #EAB996 0%, #CB7666 100%);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+        
+        .action-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(57, 19, 6, 0.2);
+            border-color: rgba(139, 69, 19, 0.4);
+        }
+        
+        .action-button > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .action-button:hover .button-text {
+            color: #F1ECE4;
+        }
+        
+        .cosmic-nav {
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.98) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(203, 118, 102, 0.3);
+            box-shadow: 0 4px 20px rgba(57, 19, 6, 0.1);
+
+        }
+        
+        .book-preview-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(241, 236, 228, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(203, 118, 102, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .book-preview-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(57, 19, 6, 0.12);
+            border-color: rgba(203, 118, 102, 0.25);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #CB7666 0%, #A93D49 100%);
+            height: 4px;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #391306 0%, #8B4513 40%, #A93D49 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-book {
+            position: fixed;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-book-1 { top: 10%; right: 5%; animation: float 6s ease-in-out infinite; }
+        .floating-book-2 { bottom: 20%; left: 3%; animation: float 8s ease-in-out infinite 2s; }
+        .floating-book-3 { top: 60%; right: 8%; animation: float 7s ease-in-out infinite 4s; }
+        
+        @media (max-width: 768px) {
+            .floating-book { display: none; }
+            nav.cosmic-nav {
+            display: block !important;
+            }
+            .md\:hidden {
+            display: block !important;
+            }
+        }
+        @media (min-width: 768px) {
+        .md\:hidden {
+            display: none !important;
+        }
         }
     </style>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-
 </head>
 
 <body>
+    <!-- Floating Background Books -->
+    <div class="floating-book floating-book-1 text-6xl">📚</div>
+    <div class="floating-book floating-book-2 text-5xl">📖</div>
+    <div class="floating-book floating-book-3 text-4xl">📝</div>
+
     <!-- Navigation -->
-    <nav class="bg-white bg-opacity-90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-8">
-                    <a href="dashboard.html" class="text-2xl font-bold font-serif text-space-brown">myBookSpace 📚</a>
+                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">myBookSpace 📚</h1>
                     <div class="hidden md:flex space-x-6">
-                        <a href="dashboard.html" class="text-space-red font-semibold border-b-2 border-space-red pb-1">Dashboard</a>
-                        <a href="bookshelf.html" class="text-gray-600 hover:text-space-red transition-colors">Bookshelf</a>
-                        <a href="add-book.html" class="text-gray-600 hover:text-space-red transition-colors">Add Book</a>
-                        <a href="../recommendations.html" class="text-gray-600 hover:text-space-red transition-colors">Recommendations</a>
+                        <a href="dashboard.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-3 py-2">Dashboard</a>
+                        <a href="friends.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Friends & Feed</a>
+                        <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Recommendations</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-space-red rounded-full flex items-center justify-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
                             <span class="text-white text-sm font-semibold">👤</span>
                         </div>
-                        <span class="text-space-brown font-medium" id="user-name">Reader</span>
+                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span>
                     </div>
-                    <button onclick="logout()" class="text-gray-600 hover:text-space-red transition-colors" data-nav="logout">
+                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
                         Logout
                     </button>
                 </div>
@@ -111,149 +268,195 @@
     </nav>
 
     <!-- Mobile Navigation -->
-    <div class="md:hidden bg-white bg-opacity-90 backdrop-blur-md border-t">
-        <div class="flex justify-around py-2">
-            <a href="dashboard.html" class="flex flex-col items-center p-2 text-space-red">
-                <span class="text-xl">📊</span>
+    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
+        <div class="flex justify-around py-3">
+            <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
+                <span class="text-xl mb-1">📊</span>
                 <span class="text-xs font-medium">Dashboard</span>
             </a>
-            <a href="bookshelf.html" class="flex flex-col items-center p-2 text-gray-600">
-                <span class="text-xl">📚</span>
-                <span class="text-xs">Bookshelf</span>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">📚</span>
+                <span class="text-xs">My Books</span>
             </a>
-            <a href="add-book.html" class="flex flex-col items-center p-2 text-gray-600">
-                <span class="text-xl">➕</span>
-                <span class="text-xs">Add Book</span>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">👥</span>
+                <span class="text-xs">Friends</span>
             </a>
-            <a href="recommendations.html" class="flex flex-col items-center p-2 text-gray-600">
-                <span class="text-xl">🤖</span>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">🌟</span>
                 <span class="text-xs">Recs</span>
             </a>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8">
-        <!-- Welcome Section -->
-        <div class="fade-in mb-8">
-            <h1 id="welcome-message" class="text-3xl md:text-4xl font-bold text-space-brown mb-2">
-                Welcome back, Reader! 📚
-            </h1>
-            <p class="text-gray-600">Ready to continue your reading journey?</p>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 fade-in">
-            <div class="stat-card rounded-xl p-6 text-center">
-                <div class="floating-icon text-3xl mb-3">📖</div>
-                <div class="text-2xl font-bold text-space-brown" id="books-read">0</div>
-                <div class="text-sm text-gray-600">Books Read</div>
-            </div>
-            
-            <div class="stat-card rounded-xl p-6 text-center">
-                <div class="floating-icon text-3xl mb-3" style="animation-delay: 0.2s;">📚</div>
-                <div class="text-2xl font-bold text-space-brown" id="currently-reading">0</div>
-                <div class="text-sm text-gray-600">Currently Reading</div>
-            </div>
-            
-            <div class="stat-card rounded-xl p-6 text-center">
-                <div class="floating-icon text-3xl mb-3" style="animation-delay: 0.4s;">📄</div>
-                <div class="text-2xl font-bold text-space-brown" id="total-pages">0</div>
-                <div class="text-sm text-gray-600">Pages Read</div>
-            </div>
-            
-            <div class="stat-card rounded-xl p-6 text-center">
-                <div class="floating-icon text-3xl mb-3" style="animation-delay: 0.6s;">🎯</div>
-                <div class="text-2xl font-bold text-space-brown" id="goal-progress">0/12</div>
-                <div class="text-sm text-gray-600">Reading Goal</div>
+    <main class="container mx-auto px-6 py-8 max-w-7xl">
+        <!-- Hero Welcome Section -->
+        <div class="hero-gradient-bg rounded-3xl p-8 md:p-12 mb-12 animate-fade-in-up">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold gradient-text mb-4 font-serif animate-float">
+                </h1>
+                <p class="text-warm-brown text-lg md:text-xl opacity-90 mb-6 max-w-2xl mx-auto">
+                    Ready to dive into your next literary adventure? Your books are waiting for you.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-space-red text-white px-8 py-3 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg animate-glow">
+                        Continue Reading
+                    </button>
+                    <button class="bg-white text-space-red px-8 py-3 rounded-full font-semibold border-2 border-space-red hover:bg-cream-light transition-all transform hover:scale-105 shadow-lg">
+                        Add New Book
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Reading Goal Progress -->
-        <div class="glass-card rounded-xl p-6 mb-8 fade-in">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-space-brown">2025 Reading Goal</h2>
-                <div class="relative w-16 h-16">
-                    <svg class="progress-ring w-16 h-16">
-                        <circle cx="32" cy="32" r="28" stroke="#E5E7EB" stroke-width="4" fill="none"/>
-                        <circle id="progress-circle" cx="32" cy="32" r="28" stroke="#AB2945" stroke-width="4" 
-                                fill="none" stroke-linecap="round" stroke-dasharray="0 176"/>
-                    </svg>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="text-xs font-semibold text-space-brown">Goal</span>
+        <!-- Stats Section -->
+        <div class="mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <h2 class="text-3xl font-semibold text-space-brown mb-8 font-serif text-center">Your Reading Journey</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Books Read -->
+                <div class="stat-card rounded-3xl p-8 text-center group">
+                    <div class="text-5xl mb-4 animate-float">📚</div>
+                    <div class="text-4xl font-bold text-space-brown mb-2"></div>
+                    <div class="text-warm-brown font-medium text-lg">Books Read</div>
+                    <div class="mt-4 text-xs text-warm-brown opacity-70">+3 this month</div>
+                </div>
+                
+                <!-- Currently Reading -->
+                <div class="stat-card rounded-3xl p-8 text-center group">
+                    <div class="text-5xl mb-4 animate-float-delayed">📖</div>
+                    <div class="text-4xl font-bold text-space-brown mb-2"></div>
+                    <div class="text-warm-brown font-medium text-lg">Currently Reading</div>
+                    <div class="mt-4 text-xs text-warm-brown opacity-70">Making great progress!</div>
+                </div>
+                
+                <!-- Want to Read -->
+                <div class="stat-card rounded-3xl p-8 text-center group sm:col-span-2 lg:col-span-1">
+                    <div class="text-5xl mb-4 animate-float-delayed-2">⭐</div>
+                    <div class="text-4xl font-bold text-space-brown mb-2"></div>
+                    <div class="text-warm-brown font-medium text-lg">Want to Read</div>
+                    <div class="mt-4 text-xs text-warm-brown opacity-70">So many adventures await</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Section -->
+        <div class="mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <h2 class="text-3xl font-semibold text-space-brown mb-8 font-serif text-center">Quick Actions</h2>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Add Book -->
+                <a href="#" class="action-button rounded-3xl p-8 text-center group">
+                    <div class="text-4xl mb- group-hover:scale-110 transition-transform duration-300">➕</div>
+                    <div class="text-space-brown font-semibold text-lg button-text transition-colors">Add Book</div>
+                </a>
+                
+                <!-- My Books -->
+                <a href="#" class="action-button rounded-3xl p-8 text-center group">
+                    <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📚</div>
+                    <div class="text-space-brown font-semibold text-lg button-text transition-colors">My Books</div>
+                </a>
+                
+                <!-- Recommendations -->
+                <a href="#" class="action-button rounded-3xl p-8 text-center group">
+                    <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🌟</div>
+                    <div class="text-space-brown font-semibold text-lg button-text transition-colors">Book Recs</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Currently Reading Section -->
+        <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
+            <div class="glass-card rounded-3xl p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-semibold text-space-brown font-serif">Continue Your Journey</h2>
+                    <a href="#" class="text-salmon hover:text-rose-red transition-colors font-medium text-lg flex items-center">
+                        View All Books 
+                        <span class="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Book 1 -->
+                    <div class="book-preview-card rounded-2xl p-6 group">
+                        <div class="h-40 bg-gradient-to-br from-peach to-salmon rounded-xl mb-4 flex items-center justify-center shadow-lg">
+                            <span class="text-white font-bold text-2xl">📖</span>
+                        </div>
+                        <h3 class="font-bold text-space-brown mb-2 text-lg">The Seven Husbands of Evelyn Hugo</h3>
+                        <p class="text-warm-brown text-sm opacity-75 mb-3">by Taylor Jenkins Reid</p>
+                        <div class="mb-2">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-warm-brown">Progress</span>
+                                <span class="text-space-red font-semibold">68%</span>
+                            </div>
+                            <div class="w-full bg-cream-medium rounded-full h-2">
+                                <div class="progress-bar rounded-full" style="width: 68%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Book 2 -->
+                    <div class="book-preview-card rounded-2xl p-6 group">
+                        <div class="h-40 bg-gradient-to-br from-salmon to-rose-red rounded-xl mb-4 flex items-center justify-center shadow-lg">
+                            <span class="text-white font-bold text-2xl">📚</span>
+                        </div>
+                        <h3 class="font-bold text-space-brown mb-2 text-lg">Atomic Habits</h3>
+                        <p class="text-warm-brown text-sm opacity-75 mb-3">by James Clear</p>
+                        <div class="mb-2">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-warm-brown">Progress</span>
+                                <span class="text-space-red font-semibold">34%</span>
+                            </div>
+                            <div class="w-full bg-cream-medium rounded-full h-2">
+                                <div class="progress-bar rounded-full" style="width: 34%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Book 3 -->
+                    <div class="book-preview-card rounded-2xl p-6 group md:col-span-2 lg:col-span-1">
+                        <div class="h-40 bg-gradient-to-br from-space-pink-dark to-space-red rounded-xl mb-4 flex items-center justify-center shadow-lg">
+                            <span class="text-white font-bold text-2xl">✨</span>
+                        </div>
+                        <h3 class="font-bold text-space-brown mb-2 text-lg">The Midnight Library</h3>
+                        <p class="text-warm-brown text-sm opacity-75 mb-3">by Matt Haig</p>
+                        <div class="mb-2">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-warm-brown">Progress</span>
+                                <span class="text-space-red font-semibold">91%</span>
+                            </div>
+                            <div class="w-full bg-cream-medium rounded-full h-2">
+                                <div class="progress-bar rounded-full" style="width: 91%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-200 rounded-full h-3 mb-2">
-                <div id="progress-bar" class="bg-gradient-to-r from-space-red to-pink-500 h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
-            </div>
-            <p class="text-sm text-gray-600">Keep up the great work! You're making excellent progress toward your reading goal.</p>
         </div>
 
-        <!-- Continue Reading & Recent Activity -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Continue Reading -->
-            <div class="glass-card rounded-xl p-6 fade-in">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-space-brown">Continue Reading</h2>
-                    <a href="bookshelf.html" class="text-space-red hover:underline text-sm">View All</a>
+        <!-- Reading Goal Section -->
+        <div class="mt-12 animate-fade-in-up" style="animation-delay: 0.8s;">
+            <div class="glass-card rounded-3xl p-8 text-center">
+                <h3 class="text-2xl font-bold text-space-brown mb-4 font-serif">2025 Reading Goal</h3>
+                <div class="flex items-center justify-center mb-6">
+                    <div class="text-5xl font-bold text-space-red">47</div>
+                    <div class="mx-4 text-2xl text-warm-brown">/</div>
+                    <div class="text-3xl font-semibold text-warm-brown opacity-75">60</div>
                 </div>
-                <div id="continue-reading-books" class="space-y-4">
-                    <!-- Books will be loaded here -->
-                    <div class="text-center py-8">
-                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-space-red mx-auto"></div>
-                        <p class="text-gray-600 mt-2">Loading your books...</p>
+                <div class="max-w-md mx-auto mb-4">
+                    <div class="w-full bg-cream-medium rounded-full h-3">
+                        <div class="progress-bar rounded-full h-3" style="width: 78%"></div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="glass-card rounded-xl p-6 fade-in">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-space-brown">Recent Activity</h2>
-                    <span class="text-space-red text-sm">Last 7 days</span>
-                </div>
-                <div id="recent-activity" class="space-y-2">
-                    <!-- Activity will be loaded here -->
-                    <div class="text-center py-6">
-                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-space-red mx-auto"></div>
-                        <p class="text-gray-600 mt-2 text-sm">Loading activity...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="mt-8 fade-in">
-            <h2 class="text-xl font-bold text-space-brown mb-4">Quick Actions</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="add-book.html" class="glass-card rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 group">
-                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">➕</div>
-                    <div class="text-sm font-medium text-space-brown">Add Book</div>
-                </a>
-                
-                <a href="recommendations.html" class="glass-card rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 group">
-                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">🤖</div>
-                    <div class="text-sm font-medium text-space-brown">Get Recs</div>
-                </a>
-                
-                <a href="bookshelf.html" class="glass-card rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 group">
-                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">📚</div>
-                    <div class="text-sm font-medium text-space-brown">My Shelf</div>
-                </a>
-                
-                <a href="profile.html" class="glass-card rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 group">
-                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform">⚙️</div>
-                    <div class="text-sm font-medium text-space-brown">Settings</div>
-                </a>
+                <p class="text-warm-brown text-sm">You're 78% of the way to your goal! Keep it up! 🎉</p>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="mt-16 bg-space-brown text-white py-8">
+    <footer class="mt-20 bg-gradient-to-r from-space-brown to-warm-brown text-cream-light py-12">
         <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2025 My Book Space. Keep reading, keep growing! 📚</p>
+            <p class="text-lg opacity-90 mb-2">✨ Keep reading, keep growing! ✨</p>
+            <p class="opacity-70">&copy; 2025 My Book Space. Where stories find their space.</p>
         </div>
     </footer>
 </body>

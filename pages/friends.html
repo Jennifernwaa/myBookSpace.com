@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Share your reading journey - My Book Space">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="/pages/friends.js"></script>
+    <title>Book Feed - My Book Space</title>
+
+    <!-- Extended Color Palette -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'space-pink-light': '#F1CED4',
+              'space-pink-dark': '#F8CCD3',
+              'space-red': '#AB2945',
+              'space-brown': '#391306',
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
+            },
+            animation: {
+              'float': 'float 4s ease-in-out infinite',
+              'float-delayed': 'float 4s ease-in-out infinite 1s',
+              'float-delayed-2': 'float 4s ease-in-out infinite 2s',
+              'fade-in-up': 'fadeInUp 0.8s ease-out',
+              'pulse-gentle': 'pulseGentle 3s ease-in-out infinite',
+              'glow': 'glow 2s ease-in-out infinite alternate',
+              'wiggle': 'wiggle 1s ease-in-out infinite',
+              'cozy-bounce': 'cozyBounce 2s ease-in-out infinite',
+              'warm-pulse': 'warmPulse 2.5s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                '50%': { transform: 'translateY(-8px) rotate(2deg)' }
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              pulseGentle: {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.02)' }
+              },
+              glow: {
+                '0%': { boxShadow: '0 0 20px rgba(171, 41, 69, 0.3)' },
+                '100%': { boxShadow: '0 0 30px rgba(171, 41, 69, 0.5)' }
+              },
+              wiggle: {
+                '0%, 100%': { transform: 'rotate(-3deg)' },
+                '50%': { transform: 'rotate(3deg)' }
+              },
+              cozyBounce: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-4px)' }
+              },
+              warmPulse: {
+                '0%, 100%': { transform: 'scale(1)', opacity: '0.7' },
+                '50%': { transform: 'scale(1.05)', opacity: '1' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #F7F5F0 0%, #F1ECE4 25%, #E8E2D5 50%, #EAB996 75%, #CB7666 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        
+        /* Cozy fireplace effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 100%, rgba(234, 185, 150, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        h1, h2, h3 { font-family: 'Lora', serif; }
+        
+        .handwritten { font-family: 'Dancing Script', cursive; }
+        
+        .cosmic-nav {
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.98) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(203, 118, 102, 0.3);
+            box-shadow: 0 4px 20px rgba(57, 19, 6, 0.1);
+
+        }
+        
+        .glass-card {
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(247, 245, 240, 0.9) 30%,
+                rgba(241, 236, 228, 0.85) 70%,
+                rgba(241, 206, 212, 0.3) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(203, 118, 102, 0.2);
+            box-shadow: 0 20px 60px rgba(57, 19, 6, 0.15), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .post-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(247, 245, 240, 0.9) 50%,
+                rgba(234, 185, 150, 0.1) 100%);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(203, 118, 102, 0.15);
+            box-shadow: 0 8px 25px rgba(57, 19, 6, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(57, 19, 6, 0.15);
+            border-color: rgba(203, 118, 102, 0.3);
+        }
+        
+        .search-input, .post-textarea {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.98) 0%, 
+                rgba(247, 245, 240, 0.95) 100%);
+            border: 2px solid rgba(203, 118, 102, 0.3);
+            transition: all 0.4s ease;
+        }
+        
+        .search-input:focus, .post-textarea:focus {
+            outline: none;
+            border-color: rgba(169, 61, 73, 0.6);
+            box-shadow: 0 0 0 4px rgba(241, 206, 212, 0.4),
+                        0 8px 25px rgba(57, 19, 6, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .search-result-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(241, 206, 212, 0.1) 100%);
+            border: 2px solid rgba(203, 118, 102, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .search-result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(57, 19, 6, 0.15);
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #CB7666 0%, #A93D49 50%, #AB2945 100%);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(171, 41, 69, 0.4);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #391306 0%, #8B4513 30%, #A93D49 70%, #CB7666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-element {
+            position: fixed;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 2;
+            filter: drop-shadow(0 4px 8px rgba(57, 19, 6, 0.1));
+        }
+        
+        .floating-book-1 { top: 10%; right: 8%; animation: float 6s ease-in-out infinite; }
+        .floating-book-2 { bottom: 20%; left: 5%; animation: float-delayed 8s ease-in-out infinite; }
+        .floating-book-3 { top: 60%; right: 12%; animation: float-delayed-2 7s ease-in-out infinite; }
+        .floating-heart-1 { top: 30%; left: 15%; animation: warm-pulse 4s ease-in-out infinite; }
+        .floating-heart-2 { bottom: 40%; right: 20%; animation: warm-pulse 5s ease-in-out infinite 1s; }
+        
+        .friendship-quote {
+            background: linear-gradient(135deg, 
+                rgba(234, 185, 150, 0.3) 0%, 
+                rgba(241, 206, 212, 0.2) 100%);
+            border-left: 4px solid #CB7666;
+        }
+        
+        @media (max-width: 768px) {
+            .floating-element { display: none; }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 236, 228, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #CB7666, #A93D49);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #A93D49, #AB2945);
+        }
+
+        .like-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .comment-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #EAB996 0%, #CB7666 50%, #A93D49 100%);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 30px rgba(169, 61, 73, 0.3);
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+
+<body>
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">myBookSpace 📚</h1>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="dashboard.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Dashboard</a>
+                        <a href="friends.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-3 py-2">Friends & Feed</a>
+                        <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Recommendations</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-white text-sm font-semibold">👤</span>
+                        </div>
+                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span>
+                    </div>
+                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
+        <div class="flex justify-around py-3">
+            <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
+                <span class="text-xl mb-1">📊</span>
+                <span class="text-xs font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">📚</span>
+                <span class="text-xs">My Books</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">👥</span>
+                <span class="text-xs">Friends</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1">🌟</span>
+                <span class="text-xs">Recs</span>
+            </a>
+        </div>
+    </div>
+    <br>
+    <br>
+
+                <!-- Page Header -->
+        <div class="text-center mb-12 animate-fade-in-up">
+            <h1 class="text-4xl md:text-6xl font-bold gradient-text mb-6 font-serif">
+                <span class="animate-wiggle inline-block">🫂</span> Friends & Feed <span class="animate-wiggle inline-block">🫂</span>
+            </h1>
+            <p class="text-warm-brown text-lg md:text-xl opacity-90 max-w-3xl mx-auto leading-relaxed">
+                Build your cozy reading community, share favorite passages, and discover magical stories together in our warm literary haven
+            </p>
+        </div>
+
+    <main class="parent grid grid-cols-5 grid-rows-5 gap-4 max-w-7xl mx-auto py-12 px-4 md:px-8">
+
+    <!-- Friends List (div1) -->
+    <section class="col-span-2 row-span-5 bg-white/80 rounded-3xl shadow-lg p-6 flex flex-col overflow-y-auto min-h-[400px]">
+        <h2 class="text-2xl font-bold text-space-brown mb-6 font-serif flex items-center">
+            <span class="mr-3 text-3xl animate-warm-pulse">🤗</span>
+            Friends
+        </h2>
+        <div class="mb-4 text-warm-brown opacity-75 bg-cream-light px-4 py-2 rounded-full text-center">
+            <span class="font-medium text-lg" id="friendCountDisplay">0 wonderful friends</span>
+        </div>
+        <div id="friends-list" class="flex-1 flex flex-col gap-4 overflow-y-auto">
+            <!-- Friends will be populated here -->
+        </div>
+        <div id="emptyState" class="hidden mt-8 text-center text-warm-brown opacity-70">
+            <div class="text-5xl mb-2">🫂</div>
+            <p>No friends yet. Search to add some!</p>
+        </div>
+    </section>
+
+
+
+    <!-- Search Friends (div2) -->
+    <section class="col-span-3 row-span-1 bg-white/80 rounded-3xl shadow-lg p-8 flex flex-col justify-center">
+        <h2 class="text-2xl font-semibold text-space-brown mb-4 font-serif flex items-center">
+            <span class="mr-3 text-3xl animate-wiggle">🔍</span>
+            Find Your Next Reading Companion
+        </h2>
+        <div class="flex flex-col sm:flex-row gap-4 mb-5">
+            <input 
+                type="text" 
+                placeholder="Search by username or email... ✨" 
+                class="search-input flex-1 px-10 py-5 rounded-2xl text-space-brown placeholder-warm-brown placeholder-opacity-60 text-lg"
+                id="searchInput"
+            >
+            <button class="search-btn text-white px-9 py-4 rounded-2xl font-semibold flex items-center justify-center space-x-3 text-lg">
+                <span>Search</span>
+                <span class="text-xl animate-pulse">🔎</span>
+            </button>
+        </div>
+        <div id="searchResults" class="space-y-4">
+            <!-- Search results will be populated here -->
+        </div>
+    </section>
+
+    <!-- Feed/Activity (div3) -->
+    <section class="col-span-3 row-span-4 col-start-3 row-start-2 bg-white/80 rounded-3xl shadow-lg p-8 flex flex-col">
+        <h2 class="text-2xl font-semibold text-space-brown mb-6 font-serif flex items-center">
+            <span class="mr-4 text-4xl animate-cozy-bounce">📝</span>
+            Recent Friend Activity
+        </h2>
+        <!-- Create Post Box -->
+        <div class="glass-card rounded-2xl p-6 mb-8 animate-fade-in-up">
+            <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-peach to-salmon rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                    <span class="text-white font-semibold" id="currentUserInitial"></span>
+                </div>
+                <div class="flex-1">
+                    <textarea 
+                        id="postContent"
+                        class="post-textarea w-full min-h-[60px] max-h-40 px-4 py-3 rounded-xl text-space-brown placeholder-warm-brown placeholder-opacity-60 text-lg resize-none mb-2"
+                        maxlength="500"
+                        placeholder="Share your latest book thoughts, discoveries, or cozy reading moments... 📚✨"
+                    ></textarea>
+                    <div class="flex items-center justify-between">
+                        <span id="charCount" class="text-sm text-warm-brown opacity-70">0/500 characters</span>
+                        <button id="createPostBtn" class="action-btn text-white px-6 py-2 rounded-xl font-semibold flex items-center space-x-2">
+                            <span>Post</span>
+                            <span class="text-lg">🚀</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Loading and Empty States -->
+        <div id="loadingState" class="text-center py-8 hidden">
+            <div class="text-4xl mb-2 animate-pulse">⏳</div>
+            <p class="text-warm-brown opacity-70">Loading your feed...</p>
+        </div>
+        <div id="emptyFeedState" class="hidden text-center py-8">
+            <div class="text-5xl mb-2">📭</div>
+            <p class="text-warm-brown opacity-70">No posts yet. Share something to start your feed!</p>
+        </div>
+        <div class="space-y-4 flex-1 overflow-y-auto" id="postsFeed"></div>
+        <div class="space-y-4 flex-1 overflow-y-auto" id="activityFeed">
+            <!-- Activity feed will be populated here -->
+        </div>
+    </section>
+</main>
+
+    <!-- Cozy Footer -->
+    <footer class="mt-20 bg-gradient-to-r from-space-brown via-warm-brown to-salmon text-cream-light py-16">
+        <div class="container mx-auto px-6 text-center">
+            <div class="mb-6">
+                <p class="text-2xl opacity-90 mb-4 handwritten">📚 "Books are meant to be shared, stories are meant to connect hearts" 📚</p>
+                <div class="flex justify-center space-x-4 text-3xl">
+                    <span class="animate-cozy-bounce">☕</span>
+                    <span class="animate-cozy-bounce" style="animation-delay: 0.5s;">📖</span>
+                    <span class="animate-cozy-bounce" style="animation-delay: 1s;">💕</span>
+                </div>
+            </div>
+            <p class="opacity-70 text-lg">&copy; 2025 My Book Space. Where every page brings us closer together.</p>
+        </div>
+    </footer>
+</body>
+</html>

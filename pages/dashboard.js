@@ -25,19 +25,22 @@ let allBooks = [];
 
 // Auth state observer
 onAuthStateChanged(auth, async (user) => {
-    if (user.emailVerified) {
-        currentUser = user;
 
-        // Fetch all books
-        const q = query(collection(db, "users", currentUser.uid, "books"));
-        const snapshot = await getDocs(q);
-        allBooks = [];
-        snapshot.forEach(docSnap => {
-        allBooks.push({ id: docSnap.id, ...docSnap.data() });
-        });
+    if (user) {
+        if (user.emailVerified){
+            currentUser = user;
 
-        await loadUserData();
-        handleReadingFormModal();
+            // Fetch all books
+            const q = query(collection(db, "users", currentUser.uid, "books"));
+            const snapshot = await getDocs(q);
+            allBooks = [];
+            snapshot.forEach(docSnap => {
+            allBooks.push({ id: docSnap.id, ...docSnap.data() });
+            });
+
+            await loadUserData();
+            handleReadingFormModal();
+        } 
     } else {
         window.location.href = '../index.html';
     }

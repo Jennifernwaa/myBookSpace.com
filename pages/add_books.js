@@ -33,7 +33,7 @@ onAuthStateChanged(auth, (user) => {
         });
     } else {
         alert("Please log in to add books.");
-        window.location.href = "../login.html";
+        window.location.href = "../index.html";
     }
 });
 

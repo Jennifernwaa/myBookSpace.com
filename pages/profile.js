@@ -42,7 +42,7 @@ function getQueryParam(name) {
 // Main profile loading logic
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
-        window.location.href = '../login.html';
+        window.location.href = '../index.html';
         return;
     }
     currentUser = user;

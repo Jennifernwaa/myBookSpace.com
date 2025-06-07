@@ -46,10 +46,11 @@ async function performSearch() {
     document.getElementById('noResults').classList.add('hidden');
 
     try {
+        document.getElementById('loadingState').classList.add('hidden');
         const response = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(queryInput)}`);
         const data = await response.json();
 
-        document.getElementById('loadingState').classList.add('hidden');
+        
 
         if (!data.docs || data.docs.length === 0) {
             document.getElementById('noResults').classList.remove('hidden');
@@ -57,6 +58,7 @@ async function performSearch() {
         }
 
         displaySearchResults(data.docs.slice(0, 10)); // Show up to 10 results
+        console.log("Search results:", data.docs.slice(0, 10)); // Log the results for debugging
     } catch (error) {
         document.getElementById('loadingState').classList.add('hidden');
         alert("Error searching for books.");
@@ -78,7 +80,8 @@ function displaySearchResults(books) {
         }
 
         const bookElement = document.createElement('div');
-        bookElement.className = 'result-card rounded-2xl p-6 flex items-center space-x-4';
+        bookElement.className = 'result-card rounded-2xl p-6 flex items-center space-x-4 cursor-pointer hover:shadow-lg transition-all';
+        bookElement.dataset.bookId = book.key; // Store book key for navigation
 
         bookElement.innerHTML = `
             <div class="w-16 h-20 bg-gradient-to-br from-peach to-salmon rounded-lg flex items-center justify-center text-white text-2xl shadow-lg overflow-hidden">
@@ -87,13 +90,74 @@ function displaySearchResults(books) {
             <div class="flex-1">
                 <h4 class="font-bold text-space-brown text-lg">${book.title}</h4>
                 <p class="text-warm-brown opacity-75">by ${book.author_name?.[0] || "Unknown"}</p>
+                <p class="text-sm text-warm-brown opacity-60 mt-1">Publisher: ${book.publisher?.[0] || "Unknown"}</p>
                 <p class="text-sm text-warm-brown opacity-60 mt-1">First published: ${book.first_publish_year || "Unknown"}</p>
                 <p class="text-sm text-warm-brown opacity-60 mt-1">ISBN: ${isbn || "Not available"}</p>
             </div>
-            <button class="save-button text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all">
+            <button class="save-button text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all" onclick="event.stopPropagation()">
                 Save Book
             </button>
         `;
+
+        // Add click handler to the entire book container
+        bookElement.addEventListener('click', async (e) => {
+            if (!e.target.classList.contains('save-button')) {
+                console.log("Book card clicked!", book.key);
+                // Store book data in sessionStorage for the books.html page
+                const workKey = book.key; // e.g. "/works/OL12345W"
+                let descriptionT = 'No description available';
+                let averageRating = 0;
+                let genres = [];
+                
+                try {
+                    const details = await fetch(`https://openlibrary.org${workKey}.json`).then(res => res.json());
+                    const ratingdetails = await fetch(`https://openlibrary.org${workKey}/ratings.json`).then(res => res.json());
+                    // Get description
+                    if (details.description) {
+                        descriptionT = typeof details.description === 'string'
+                            ? details.description
+                            : details.description.value;
+                    }
+                    // Get genres/subjects: prefer details.subjects, fallback to book.subject
+                    if (Array.isArray(details.subjects) && details.subjects.length > 0) {
+                        genres = details.subjects.slice(0, 5);
+                    } else if (Array.isArray(book.subject) && book.subject.length > 0) {
+                        genres = book.subject.slice(0, 5);
+                    } else {
+                        genres = [];
+                    }
+                    // Get average rating
+                    if (
+                        ratingdetails &&
+                        ratingdetails.summary &&
+                        typeof ratingdetails.summary.average !== 'undefined' &&
+                        ratingdetails.summary.average !== null &&
+                        !isNaN(ratingdetails.summary.average)
+                    ) {
+                        averageRating = Math.round(Number(ratingdetails.summary.average));
+                    }
+                } catch (err) {
+                    console.error("Error fetching work details:", err);
+                }
+                const bookData = {
+                    title: book.title,
+                    author: book.author_name?.[0] || "Unknown",
+                    first_publish_year: book.first_publish_year || "Unknown",
+                    isbn: isbn || "Not available",
+                    cover_url: coverUrl,
+                    subjects: genres,
+                    publisher: book.publisher?.[0] || "Unknown",
+                    pages: book.number_of_pages_median || "Unknown",
+                    language: book.language?.[0] || "Unknown",
+                    description: descriptionT,
+                    rating: averageRating,
+                    key: book.key
+                };
+
+                sessionStorage.setItem('selectedBook', JSON.stringify(bookData));
+                window.location.href = 'books.html';
+            }
+        });
 
         // Save button handler
         bookElement.querySelector('button').addEventListener('click', async () => {

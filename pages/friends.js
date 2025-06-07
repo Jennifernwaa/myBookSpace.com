@@ -150,7 +150,7 @@ async function fanOutPost(postId, postData) {
             const userData = docSnap.data();
             const userFriends = userData.friends || {};
             
-            // If this user has currentUserId as a friend, they should see the post
+            // If this user follows the poster
             if (userFriends[currentUserId]) {
                 followers.push(docSnap.id);
             }
@@ -256,7 +256,7 @@ function createPostElement(post, postId) {
                         <span class="text-sm font-medium">Recommend</span>
                     </button>
                     ${isOwnPost ? `
-                        <button class="ml-auto flex items-center space-x-2 text-red-600 hover:text-red-700 transition-colors group" onclick="deletePost('${postId}')">
+                        <button class="ml-auto flex items-center space-x-2 text-red-600 hover:text-red-700 transition-colors group" onclick="deletePost('${post.postId}', '${post.authorId}')">
                             <span class="text-sm font-medium">Delete</span>
                             <span class="text-sm group-hover:animate-pulse">🗑️</span>
                         </button>
@@ -270,40 +270,39 @@ function createPostElement(post, postId) {
 }
 
 // Delete post function
-window.deletePost = async function(postId) {
+window.deletePost = async function(postId, authorId) {
     if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
         return;
     }
-    
     try {
-        // Delete from user's posts
-        const userPostQuery = query(
-            collection(db, "users", currentUserId, "posts"),
-            where("__name__", "==", postId)
-        );
-        
-        // Delete from all feeds (this is a simplified approach - in production you'd want to track this better)
+        // Delete from user's original posts collection
+        const userPostRef = doc(db, "users", authorId, "posts", postId);
+        await deleteDoc(userPostRef);
+
+        // Delete from all feeds where this post appears
         const allUsersSnap = await getDocs(collection(db, "users"));
         const deletePromises = [];
-        
-        allUsersSnap.forEach(docSnap => {
+
+        allUsersSnap.forEach(userDoc => {
+            const userId = userDoc.id;
             const feedPostQuery = query(
-                collection(db, "feed", docSnap.id, "feedPosts"),
+                collection(db, "feed", userId, "feedPosts"),
                 where("postId", "==", postId)
             );
-            
             deletePromises.push(
                 getDocs(feedPostQuery).then(snapshot => {
-                    snapshot.forEach(doc => {
-                        deleteDoc(doc.ref);
+                    const feedDeletePromises = [];
+                    snapshot.forEach(feedDoc => {
+                        feedDeletePromises.push(deleteDoc(feedDoc.ref));
                     });
+                    return Promise.all(feedDeletePromises);
                 })
             );
         });
-        
+
         await Promise.all(deletePromises);
-        showNotification("Post deleted successfully! 🗑️", "info");
-        
+
+        showNotification("Post deleted successfully! 🗑️", "success");
     } catch (error) {
         console.error('Error deleting post:', error);
         showNotification("Failed to delete post. Please try again. 😔", "error");
@@ -471,8 +470,16 @@ function renderFriendsList() {
         const card = createUserCard(user, true, false);
         card.style.animationDelay = `${index * 0.1}s`;
         friendsList.appendChild(card);
+
+        // Add click event to redirect to friend's profile
+        card.addEventListener('click', function(e) {
+            // Prevent click if Remove button is clicked
+            if (e.target.closest('button')) return;
+            window.location.href = `profile.html?uid=${user.id}`;
+        });
     });
 }
+
 
 // Render search results
 function renderSearchResults(keyword) {

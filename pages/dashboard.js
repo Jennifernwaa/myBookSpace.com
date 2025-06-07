@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
 import { getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, where, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 // Your Firebase config
 const firebaseConfig = {
@@ -20,13 +20,24 @@ const db = getFirestore(app);
 
 let currentUser = null;
 let userData = null;
+let allBooks = [];
 
 
 // Auth state observer
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
+
+        // Fetch all books
+        const q = query(collection(db, "users", currentUser.uid, "books"));
+        const snapshot = await getDocs(q);
+        allBooks = [];
+        snapshot.forEach(docSnap => {
+        allBooks.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
         await loadUserData();
+        handleReadingFormModal();
     } else {
         window.location.href = '../login.html';
     }
@@ -327,9 +338,9 @@ function updateReadingStats() {
             return false;
         }).length || 0;
         
-        if (monthlyElement) {
-            monthlyElement.textContent = `+${booksThisMonth} this month`;
-        }
+        // if (monthlyElement) {
+        //     monthlyElement.textContent = `+${booksThisMonth} this month`;
+        // }
     }
 
     // Update Currently Reading stat
@@ -441,7 +452,7 @@ function updateCurrentlyReadingSection() {
         // const icons = ['📖', '📚', '✨'];
         
         return `
-            <div class="book-preview-card rounded-2xl p-6 group cursor-pointer" onclick="openBookDetails('${book.id || index}')">
+            <div class="book-preview-card rounded-2xl p-6 group cursor-pointer" onclick="window.openReadingModalFromDashboard('${book.id || index}')">
                 <div class="h-50 bg-gradient-to-br ${gradients[index % 3]} rounded-xl mb-4 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
                     <img src="${coverUrl}" alt="Cover for ${book.title}" class="object-cover h-full w-full rounded-xl" style="max-height:100%;max-width:100%;" onerror="this.onerror=null;this.src='https://via.placeholder.com/150?text=No+Cover';">
                 </div>
@@ -512,12 +523,46 @@ function updateReadingGoalSection() {
     }
 }
 
+function openReadingModal(bookData = {}) {
+    window.editingBookId = bookData.id;
+    document.getElementById('reading-modal').classList.remove('hidden');
+    // Populate modal fields
+    document.getElementById('reading-title').value = bookData.title || '';
+    document.getElementById('reading-author').value = bookData.author || '';
+    document.getElementById('reading-progress').value = bookData.progress || 0;
+    document.getElementById('progress-display').textContent = (bookData.progress || 0) + '%';
+    document.getElementById('reading-status').value = bookData.status || 'reading';
+}
+function closeReadingModal() {
+    document.getElementById('reading-modal').classList.add('hidden');
+}
+
 // Handle book details (placeholder function)
-function openBookDetails(bookId) {
-    console.log('Opening book details for:', bookId);
-    // You can implement book details modal or navigation here
-    // For now, let's just show an alert
-    alert('Book details feature coming soon!');
+function handleReadingFormModal() {
+    // Reading
+    document.querySelector('#reading-modal form').onsubmit = async function (e) {
+        e.preventDefault();
+        const id = window.editingBookId;
+        const ref = doc(db, "users", currentUser.uid, "books", id);
+        await updateDoc(ref, {
+            title: document.getElementById('reading-title').value,
+            author: document.getElementById('reading-author').value,
+            status: document.getElementById('reading-status').value,
+            progress: parseInt(document.getElementById('reading-progress').value)
+        });
+        // Update local
+        const idx = allBooks.findIndex(b => b.id === id);
+        if (idx !== -1) {
+            allBooks[idx].title = document.getElementById('reading-title').value;
+            allBooks[idx].author = document.getElementById('reading-author').value;
+            allBooks[idx].status = document.getElementById('reading-status').value;
+            allBooks[idx].progress = parseInt(document.getElementById('reading-progress').value);
+        }
+        closeReadingModal();
+        window.location.reload();
+    };
+
+
 }
 
 // Add click handlers for Continue Reading button
@@ -623,6 +668,11 @@ function findElementByText(selector, text) {
     return Array.from(elements).find(el => el.textContent.includes(text));
 }
 
+// Progress slider update
+document.getElementById('reading-progress').addEventListener('input', function() {
+    document.getElementById('progress-display').textContent = `${this.value}%`;
+});
+
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard initialized');
@@ -631,6 +681,18 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(setupEventListeners, 1000);
 });
 
+window.openReadingModalFromDashboard = function(bookId) {
+    // Find the book in currently reading
+    const book = (userData.reading || []).find(b => b.id === bookId);
+    if (book) {
+        openReadingModal(book);
+    } else {
+        alert('Book not found!');
+    }
+};
+
+window.openReadingModal = openReadingModal;
+window.closeReadingModal = closeReadingModal;
+
 // Export functions for global access
 window.logout = logout;
-window.openBookDetails = openBookDetails;

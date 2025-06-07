@@ -32,24 +32,61 @@ const booksReadCard = document.getElementById('booksRead');
 const friendsCountCard = document.getElementById('friendsCount');
 
 
-// Auth state observer
+
+// Utility to get query param
+function getQueryParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+}
+
+// Main profile loading logic
 onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        currentUser = user;
-        
-        // Fetch current user's friends object
-        const currentUserRef = doc(db, "users", currentUser.uid);
-        const currentUserSnap = await getDoc(currentUserRef);
-        const currentUserData = currentUserSnap.data();
-        if (navUserName && navUserName.textContent === 'Reader') {
-            navUserName.textContent = currentUserData.userName || 'Reader';
-        }
-        friendsCountCard.textContent = await fetchFriendCount() || 0;
-        await loadUserProfile();
-        
-    } else {
+    if (!user) {
         window.location.href = '../login.html';
+        return;
     }
+    currentUser = user;
+
+    // Get uid from URL, fallback to current user
+    const profileUid = getQueryParam('uid') || currentUser.uid;
+
+    // Fetch profile user's data
+    const profileUserRef = doc(db, "users", profileUid);
+    const profileUserSnap = await getDoc(profileUserRef);
+    if (!profileUserSnap.exists()) {
+        alert("User not found!");
+        window.location.href = "friends.html";
+        return;
+    }
+    const profileUserData = profileUserSnap.data();
+
+    // After you fetch the logged-in user's data (not the profile being viewed)
+    const currentUserDoc = await getDoc(doc(db, "users", currentUser.uid));
+    const currentUserData = currentUserDoc.data();
+    if (navUserName) {
+        navUserName.textContent = currentUserData.userName || 'Reader';
+    }
+
+    if (userName) userName.textContent = profileUserData.userName || '';
+    if (bio) bio.textContent = profileUserData.bio || 'No bio available';
+    if (favoriteGenre) favoriteGenre.textContent = profileUserData.favoriteGenre || 'Not specified';
+
+    // Show books read and friends count for this profile
+    if (booksReadCard) {
+        const booksRead = await fetchBooksByStatus(profileUid, "finished");
+        booksReadCard.textContent = booksRead.length || 0;
+    }
+    if (friendsCountCard) {
+        const friendsObj = profileUserData.friends || {};
+        friendsCountCard.textContent = Object.keys(friendsObj).length;
+    }
+
+    // Hide edit controls if viewing someone else's profile
+    if (profileUid !== currentUser.uid) {
+        const editBtns = document.querySelectorAll('.action-btn, #editProfileModal');
+        editBtns.forEach(btn => btn.style.display = 'none');
+    }
+
 });
 
 async function loadUserProfile() {
@@ -86,11 +123,11 @@ async function loadUserProfile() {
     }
 }
 
-// Fetch books by status from users/{uid}/books
-async function fetchBooksByStatus(status) {
+// Helper to fetch books by status for any user
+async function fetchBooksByStatus(uid, status) {
     const books = [];
     const q = query(
-        collection(db, "users", currentUser.uid, "books"),
+        collection(db, "users", uid, "books"),
         where("status", "==", status)
     );
     const querySnapshot = await getDocs(q);
@@ -140,6 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Modal functions
     function openModal() {
+        loadUserProfile(); 
         modal.classList.remove('opacity-0', 'pointer-events-none');
         modal.classList.add('opacity-100');
         modalContent.classList.remove('scale-95');

@@ -35,3 +35,4 @@ onAuthStateChanged(auth, async (user) => {
         navUserName.textContent = currentUserData.userName || 'Reader';
     }
 });
+

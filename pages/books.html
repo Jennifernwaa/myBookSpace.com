@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book Details - My Book Space">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Book Details - My Book Space</title>
+
+    <!-- Extended Color Palette -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'space-pink-light': '#F1CED4',
+              'space-pink-dark': '#F8CCD3',
+              'space-red': '#AB2945',
+              'space-brown': '#391306',
+              'cream-light': '#F7F5F0',
+              'cream-medium': '#E8E2D5',
+              'ivory': '#F1ECE4',
+              'salmon': '#CB7666',
+              'rose-red': '#A93D49',
+              'peach': '#EAB996',
+              'warm-brown': '#8B4513',
+            },
+            animation: {
+              'float': 'float 4s ease-in-out infinite',
+              'fade-in-up': 'fadeInUp 0.8s ease-out',
+              'pulse-gentle': 'pulseGentle 3s ease-in-out infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+              'scale-in': 'scaleIn 0.5s ease-out',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-8px)' }
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              pulseGentle: {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.02)' }
+              },
+              shimmer: {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(100%)' }
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.9)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #F7F5F0 0%, #E8E2D5 100%);
+            min-height: 100vh;
+        }
+
+        .cosmic-nav {
+            background: linear-gradient(135deg, #F1ECE4 0%, #E8E2D5 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .page-gradient-bg {
+            background: linear-gradient(135deg, #F8CCD3 0%, #EAB996 50%, #CB7666 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="books" patternUnits="userSpaceOnUse" width="20" height="20"><text x="10" y="15" text-anchor="middle" font-size="12" opacity="0.1">📚</text></pattern></defs><rect width="100" height="100" fill="url(%23books)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .book-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,245,240,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            box-shadow: 0 20px 40px rgba(57, 19, 6, 0.1);
+        }
+
+        .detail-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,245,240,0.8) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            box-shadow: 0 10px 30px rgba(57, 19, 6, 0.08);
+        }
+
+        .rating-star {
+            color: #EAB996;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .rating-star.filled {
+            color: #CB7666;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #EAB996 0%, #CB7666 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #CB7666 0%, #A93D49 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(169, 61, 73, 0.3);
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .floating-book {
+            position: fixed;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-book-1 {
+            top: 20%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-book-2 {
+            bottom: 30%;
+            left: 5%;
+            animation-delay: 2s;
+        }
+
+        .floating-book-3 {
+            top: 60%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #391306 0%, #8B4513 50%, #A93D49 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #8B4513 0%, #391306 100%);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(57, 19, 6, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Background Books -->
+    <div class="floating-book floating-book-1 text-6xl">📚</div>
+    <div class="floating-book floating-book-2 text-5xl">📖</div>
+    <div class="floating-book floating-book-3 text-4xl">📙</div>
+
+    <!-- Navigation -->
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold font-serif text-space-brown">myBookSpace</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="history.back()" class="back-button text-white hover:text-cream-light transition-colors font-medium px-6 py-2 rounded-lg flex items-center space-x-2">
+                        <span>←</span>
+                        <span>Back</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8 max-w-6xl">
+        <!-- Book Details Section -->
+        <div id="bookDetails" class="animate-fade-in-up">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-20">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-space-brown mb-4"></div>
+            <p class="text-warm-brown text-lg">Loading book details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="hidden text-center py-20">
+            <div class="text-6xl mb-4">😔</div>
+            <h2 class="text-2xl font-bold text-space-brown mb-2">Book Not Found</h2>
+            <p class="text-warm-brown mb-6">Sorry, we couldn't load the book details.</p>
+            <button onclick="history.back()" class="back-button text-white px-6 py-3 rounded-lg font-medium">
+                Go Back
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Load book data from sessionStorage
+        function loadBookDetails() {
+            const bookData = sessionStorage.getItem('selectedBook');
+            
+            if (!bookData) {
+                showError();
+                return;
+            }
+
+            try {
+                const book = JSON.parse(bookData);
+                displayBookDetails(book);
+            } catch (error) {
+                console.error('Error parsing book data:', error);
+                showError();
+            }
+        }
+
+        function displayBookDetails(book) {
+            const detailsContainer = document.getElementById('bookDetails');
+            
+            // Generate star rating
+            const generateStars = (rating) => {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    stars += `<span class="rating-star ${i <= rating ? 'filled' : ''}">★</span>`;
+                }
+                return stars;
+            };
+
+            // Generate subject tags
+            const generateTags = (subjects) => {
+                if (!subjects || subjects.length === 0) return '<span class="tag">General</span>';
+                return subjects.map(subject => `<span class="tag">${subject}</span>`).join(' ');
+            };
+
+            detailsContainer.innerHTML = `
+                <!-- Hero Section -->
+                <div class="page-gradient-bg rounded-3xl p-8 mb-12 text-center relative">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 font-serif animate-scale-in">
+                        ${book.title}
+                    </h1>
+                    <p class="text-white text-xl opacity-90 animate-fade-in-up" style="animation-delay: 0.2s;">
+                        by ${book.author}
+                    </p>
+                </div>
+
+                <!-- Main Book Information -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                    <!-- Book Cover and Actions -->
+                    <div class="lg:col-span-1">
+                        <div class="book-card rounded-3xl p-6 text-center animate-fade-in-up" style="animation-delay: 0.3s;">
+                            <div class="w-48 h-72 mx-auto mb-6 bg-gradient-to-br from-peach to-salmon rounded-2xl shadow-2xl overflow-hidden">
+                                <img src="${book.cover_url}" alt="Cover for ${book.title}" 
+                                     class="w-full h-full object-cover" 
+                                     onerror="this.onerror=null;this.src='https://via.placeholder.com/300x450/EAB996/FFFFFF?text=${encodeURIComponent(book.title)}';">
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <button class="action-button w-full text-white px-6 py-3 rounded-xl font-semibold text-lg flex items-center justify-center space-x-2">
+                                    <span>📚</span>
+                                    <span>Add to Library</span>
+                                </button>
+                                
+                                <div class="flex space-x-2">
+                                    <button class="action-button flex-1 text-white px-4 py-2 rounded-lg font-medium text-sm">
+                                        Want to Read
+                                    </button>
+                                    <button class="action-button flex-1 text-white px-4 py-2 rounded-lg font-medium text-sm">
+                                        Currently Reading
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Details -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Rating and Basic Info -->
+                        <div class="detail-card rounded-2xl p-6 animate-fade-in-up" style="animation-delay: 0.4s;">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-2">
+                                    ${generateStars(book.rating)}
+                                    <span class="text-warm-brown font-medium">(${book.rating > 0 ? book.rating : "Not rated"}/5)</span>
+                                </div>
+                                <div class="text-sm text-warm-brown opacity-75">
+                                    Published: ${book.first_publish_year}
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                <div class="bg-cream-light rounded-lg p-3">
+                                    <div class="text-2xl mb-1">📄</div>
+                                    <div class="text-sm text-warm-brown opacity-75">Pages</div>
+                                    <div class="font-semibold text-space-brown">${book.pages}</div>
+                                </div>
+                                <div class="bg-cream-light rounded-lg p-3">
+                                    <div class="text-2xl mb-1">🏢</div>
+                                    <div class="text-sm text-warm-brown opacity-75">Publisher</div>
+                                    <div class="font-semibold text-space-brown text-xs">${book.publisher}</div>
+                                </div>
+                                <div class="bg-cream-light rounded-lg p-3">
+                                    <div class="text-2xl mb-1">🌍</div>
+                                    <div class="text-sm text-warm-brown opacity-75">Language</div>
+                                    <div class="font-semibold text-space-brown">${book.language}</div>
+                                </div>
+                                <div class="bg-cream-light rounded-lg p-3">
+                                    <div class="text-2xl mb-1">🔢</div>
+                                    <div class="text-sm text-warm-brown opacity-75">ISBN</div>
+                                    <div class="font-semibold text-space-brown text-xs">${book.isbn.substring(0, 10)}...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="detail-card rounded-2xl p-6 animate-fade-in-up" style="animation-delay: 0.5s;">
+                            <h3 class="text-xl font-bold text-space-brown mb-3 flex items-center">
+                                <span class="text-2xl mr-2">📖</span>
+                                About This Book
+                            </h3>
+                            <p class="text-warm-brown leading-relaxed">
+                                ${book.description || `Discover the captivating world of "${book.title}" by ${book.author}. This ${book.subjects?.[0] || 'remarkable'} book offers readers an engaging journey through its pages, published in ${book.first_publish_year}. With its compelling narrative and expert storytelling, this work stands as a testament to the author's skill and creativity.`}
+                            </p>
+                        </div>
+
+                        <!-- Genres/Subjects -->
+                        <div class="detail-card rounded-2xl p-6 animate-fade-in-up" style="animation-delay: 0.6s;">
+                            <h3 class="text-xl font-bold text-space-brown mb-3 flex items-center">
+                                <span class="text-2xl mr-2">🏷️</span>
+                                Genres & Topics
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${generateTags(book.subjects)}
+                            </div>
+                        </div>
+
+                        <!-- Additional Info -->
+                        <div class="detail-card rounded-2xl p-6 animate-fade-in-up" style="animation-delay: 0.7s;">
+                            <h3 class="text-xl font-bold text-space-brown mb-3 flex items-center">
+                                <span class="text-2xl mr-2">ℹ️</span>
+                                Book Information
+                            </h3>
+                            <div class="space-y-2 text-warm-brown">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Full Title:</span>
+                                    <span class="text-right max-w-md">${book.title}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Author:</span>
+                                    <span>${book.author}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">First Published:</span>
+                                    <span>${book.first_publish_year}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">ISBN:</span>
+                                    <span class="text-sm">${book.isbn}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Hide loading state
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        function showError() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookDetails();
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="mt-20 bg-gradient-to-r from-space-brown to-warm-brown text-cream-light py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg opacity-90 mb-2">✨ Every book opens a door to new worlds! ✨</p>
+            <p class="opacity-70">&copy; 2025 My Book Space. Where stories find their space.</p>
+        </div>
+    </footer>
+</body>
+</html>

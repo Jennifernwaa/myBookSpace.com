@@ -25,7 +25,7 @@ let allBooks = [];
 
 // Auth state observer
 onAuthStateChanged(auth, async (user) => {
-    if (user) {
+    if (user.emailVerified) {
         currentUser = user;
 
         // Fetch all books
@@ -39,7 +39,7 @@ onAuthStateChanged(auth, async (user) => {
         await loadUserData();
         handleReadingFormModal();
     } else {
-        window.location.href = '../login.html';
+        window.location.href = '../index.html';
     }
 });
 

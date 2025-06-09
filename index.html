@@ -63,14 +63,22 @@
         body { font-family: 'Poppins', sans-serif; }
         h1, h2, h3 { font-family: 'Lora', serif; }
         
+        html {
+          scroll-behavior: smooth;
+        }
+
         .gradient-bg {
           background: linear-gradient(135deg, #F7F5F0 0%, #E8E2D5 50%, #D6CDB7 100%);
         }
         /* Cozy Cosmic Navigation */
         .cosmic-nav {
-            background: rgba(241, 236, 228, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(203, 118, 102, 0.3);
+            background: linear-gradient(135deg, 
+                rgba(241, 236, 228, 0.98) 0%, 
+                rgba(232, 226, 213, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(203, 118, 102, 0.3);
+            box-shadow: 0 4px 20px rgba(57, 19, 6, 0.1);
+
         }   
 
         /* Main Book Showcase */
@@ -152,6 +160,39 @@
             75% { transform: translateY(-20px) rotateZ(-2deg); }
         }
 
+        .timeline {
+            position: relative;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #AB2945, #CB7666);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin: 3rem 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #AB2945;
+            border-radius: 50%;
+            border: 4px solid #F7F5F0;
+            z-index: 1;
+        }
+
 
     </style>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
@@ -174,21 +215,41 @@
       <div class="floating-book book-3" style="--url-3: url(images/botw1.jpg)"></div>
       <div class="floating-book book-4" style="--url-4: url(images/botw1.jpg)"></div>
 
-      <header class="cosmic-nav fixed top-0 w-full z-50 p-4">
-        <nav class="container mx-auto flex justify-between items-center">
+          <!-- Navigation -->
+    <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
+        <div class="container mx-auto flex justify-between items-center py-4">
             <div class="text-2xl font-bold font-serif"> myBookSpace</div>
             <div class="space-x-4">
-                <a href="about.html" class="text-space-red hover:underline transition-all">About</a>
-                <a href="contact.html" class="text-space-red hover:underline transition-all">Contact</a>
-                <a href="recommendations.html" class="text-space-red hover:underline transition-all">AI Recommendations</a>
+                <a href="#about" class="text-space-red hover:underline transition-all">About</a>
+                <a href="#features" class="text-space-red hover:underline transition-all">Features</a>
+                <a href="#contact" class="text-space-red hover:underline transition-all">Contact</a>
                 <a href="login-signup/login.html" class="bg-space-red text-white px-4 py-2 rounded-md font-semibold hover:bg-opacity-90 transition-opacity">Log In</a>
                 <a href="login-signup/register.html" class="bg-white text-space-red px-4 py-2 rounded-md font-semibold border border-space-red hover:bg-cream-medium transition-colors">Sign Up</a>
             </div>
-        </nav>
-      </header>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
+        <div class="flex justify-around py-3">
+            <a href="#" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Friends & Feed</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
+                <span class="text-xl mb-1"></span>
+                <span class="text-xs">Recommendations</span>
+            </a>
+        </div>
+    </div>
 
       <main>
-          <section class="relative text-center min-h-screen flex items-center justify-center pt-20">
+          <!-- Hero Section -->
+          <section class="relative text-center min-h-screen flex items-center justify-center">
               <div class="container mx-auto px-6 z-10">
                   <div class="animate-fade-in-up">
                       <h1 class="hero-text text-5xl md:text-7xl font-bold text-space-brown leading-tight mb-6">
@@ -214,50 +275,128 @@
                           Start Reading Now!
                       </a>
                   </div>
+              </div>
+          </section>
 
-                  <!-- Reading Stats -->
-                  <!-- <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto animate-fade-in-up" style="animation-delay: 0.9s">
-                      <div class="text-center p-6 bg-white bg-opacity-50 rounded-xl backdrop-blur-sm">
-                          <div class="text-3xl font-bold text-space-red" id="number_of_books_tracked">50K+</div>
-                          <div class="text-sm text-gray-600">Books Tracked</div>
+          <!-- About Section -->
+          <section id="about" class="py-20 bg-white">
+              <div class="container mx-auto px-6">
+                  <div class="text-center mb-16">
+                      <h2 class="text-4xl md:text-5xl font-bold text-space-brown mb-6">About <strong>myBookSpace</strong></h2>
+                      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                          Born from a love of reading and the need for better book organization, <strong>myBookSpace</strong> is where your literary journey finds its perfect home.
+                      </p>
+                  </div>
+
+                  <!-- Story Timeline -->
+                  <div class="timeline max-w-4xl mx-auto mb-16">
+                      <div class="timeline-item">
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                              <div class="bg-cream-light p-8 rounded-xl shadow-lg">
+                                  <h3 class="text-2xl font-bold text-space-red mb-4">The Problem</h3>
+                                  <p class="text-gray-700">
+                                      Scattered bookmarks, forgotten recommendations, and the eternal question: "What should I read next?" 
+                                      We've all been there, drowning in our own reading aspirations.
+                                  </p>
+                              </div>
+                              <div class="order-first md:order-last">
+                                  <div class="text-6xl text-center">📚</div>
+                              </div>
+                          </div>
                       </div>
-                      <div class="text-center p-6 bg-white bg-opacity-50 rounded-xl backdrop-blur-sm">
-                          <div class="text-3xl font-bold text-space-red" id="number_of_readers">1</div>
-                          <div class="text-sm text-gray-600">Happy Readers</div>
+
+                      <div class="timeline-item">
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                              <div class="text-6xl text-center">💡</div>
+                              <div class="bg-cream-light p-8 rounded-xl shadow-lg">
+                                  <h3 class="text-2xl font-bold text-space-red mb-4">The Vision</h3>
+                                  <p class="text-gray-700">
+                                      What if there was a space that understood your reading habits, organized your books beautifully, 
+                                      and introduced you to stories you never knew you needed?
+                                  </p>
+                              </div>
+                          </div>
                       </div>
-                      <div class="text-center p-6 bg-white bg-opacity-50 rounded-xl backdrop-blur-sm">
-                          <div class="text-3xl font-bold text-space-red">99%</div>
-                          <div class="text-sm text-gray-600">Satisfaction Rate</div>
+
+                      <div class="timeline-item">
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                              <div class="bg-cream-light p-8 rounded-xl shadow-lg">
+                                  <h3 class="text-2xl font-bold text-space-red mb-4">The Solution</h3>
+                                  <p class="text-gray-700">
+                                        <strong>myBookSpace</strong> combines the warmth of a personal library with the intelligence of AI recommendations, 
+                                      creating your perfect reading companion.
+                                  </p>
+                              </div>
+                              <div class="order-first md:order-last">
+                                  <div class="text-6xl text-center">🚀</div>
+                              </div>
+                          </div>
                       </div>
                   </div>
-              </div> -->
+
+                  <!-- Creator Section -->
+                  <div class="bg-gradient-to-r from-space-red to-salmon p-8 rounded-xl text-white text-center">
+                      <h3 class="text-2xl font-bold mb-4">Meet the Creator</h3>
+                      <p class="text-lg opacity-90 max-w-2xl mx-auto">
+                          Hi, I'm Jennifer! As a passionate reader and developer, I created <strong>myBookSpace</strong> to solve my own reading organization challenges. 
+                          I'm excited to share this with fellow book lovers.
+                      </p>
+                  </div>
+              </div>
           </section>
         
-          <section id="features" class="py-20 bg-white">
-            <div class="container mx-auto px-6 text-center">
-              <h2 class="text-4xl font-bold text-space-brown mb-4">All Your Books, Perfectly Organized</h2>
-              <p class="text-lg mt-2 text-gray-600 mb-12">Everything you need to enhance your reading life.</p>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="feature-card p-8 rounded-lg shadow-lg">
-                    <div class="text-4xl mb-4">T</div>
-                    <h3 class="text-2xl font-bold text-space-red mb-4">Track Your Progress</h3>
-                    <p class="text-space-brown">Log the books you're currently reading, want to read, and have finished. Never lose your page again.</p>
-                </div>
-                <div class="feature-card p-8 rounded-lg shadow-lg">
-                    <div class="text-4xl mb-4">O</div>
-                    <h3 class="text-2xl font-bold text-space-red mb-4">Organize Your Shelves</h3>
-                    <p class="text-space-brown">Create custom virtual shelves to categorize your books exactly how you like them. Your library, your rules.</p>
-                </div>
-                <div class="feature-card p-8 rounded-lg shadow-lg">
-                    <div class="text-4xl mb-4">G</div>
-                    <h3 class="text-2xl font-bold text-space-red mb-4">Get AI Recommendations</h3>
-                    <p class="text-space-brown">Tell us your favorite genres or authors, and let our smart AI find hidden gems you're sure to love.</p>
-                </div>
+          <!-- Features Section -->
+          <section id="features" class="py-20 bg-gradient-to-br from-cream-light to-cream-medium">
+              <div class="container mx-auto px-6 text-center">
+                  <h2 class="text-4xl font-bold text-space-brown mb-4">All Your Books, Perfectly Organized</h2>
+                  <p class="text-lg mt-2 text-gray-600 mb-12">Everything you need to enhance your reading life.</p>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                      <div class="feature-card p-8 rounded-lg shadow-lg">
+                          <div class="text-4xl mb-4">📖</div>
+                          <h3 class="text-2xl font-bold text-space-red mb-4">Track Your Progress</h3>
+                          <p class="text-space-brown">Log the books you're currently reading, want to read, and have finished. Never lose your page again.</p>
+                      </div>
+                      <div class="feature-card p-8 rounded-lg shadow-lg">
+                          <div class="text-4xl mb-4">📚</div>
+                          <h3 class="text-2xl font-bold text-space-red mb-4">Organize Your Shelves</h3>
+                          <p class="text-space-brown">Create custom virtual shelves to categorize your books exactly how you like them. Your library, your rules.</p>
+                      </div>
+                      <div class="feature-card p-8 rounded-lg shadow-lg">
+                          <div class="text-4xl mb-4">🤖</div>
+                          <h3 class="text-2xl font-bold text-space-red mb-4">Get AI Recommendations</h3>
+                          <p class="text-space-brown">Tell us your favorite genres or authors, and let our smart AI find hidden gems you're sure to love.</p>
+                      </div>
+                  </div>
               </div>
-            </div>
           </section>
 
-          <section class="cta-section py-20">
+          <!-- Contact Section -->
+          <section id="contact" class="py-20 bg-gradient-to-br from-space-red to-salmon text-white">
+              <div class="container mx-auto px-6 text-center">
+                  <h2 class="text-4xl font-bold mb-6">Get in Touch</h2>
+                  <p class="text-lg opacity-90 max-w-2xl mx-auto mb-12">
+                      Have questions, suggestions, or just want to chat about books? 
+                      I'd love to hear from you!
+                  </p>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                      <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm">
+                          <div class="text-3xl mb-4">📧</div>
+                          <h3 class="text-xl font-bold mb-2">Email</h3>
+                          <p class="opacity-90">jennifernwachinaemere@gmail.com</p>
+                      </div>
+                      
+                      <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm">
+                          <div class="text-3xl mb-4">📱</div>
+                          <button href="https://www.instagram.com/jenniferrnw/"><h3 class="text-xl font-bold mb-2">Instagram</h3>
+                          <p class="opacity-90">@jenniferrnw</p></button>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          <!-- CTA Section -->
+          <section class="cta-section py-20 bg-white">
               <div class="container mx-auto px-6 text-center">
                   <h2 class="text-4xl font-bold text-space-brown mb-4">Join the Community of Readers</h2>
                   <p class="text-lg text-gray-700 max-w-xl mx-auto mb-8">Start building your personal book space today. It's free and easy to get started.</p>
@@ -265,13 +404,14 @@
                       <a href="login-signup/register.html" class="bg-space-red text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg">
                           Sign Up Now
                       </a>
-                      <a href="recommendations.html" class="bg-white text-space-red px-8 py-4 rounded-lg font-semibold text-lg border-2 border-space-red hover:bg-cream-light transition-all transform hover:scale-105 shadow-lg">
+                      <a href="#recommendations" class="bg-white text-space-red px-8 py-4 rounded-lg font-semibold text-lg border-2 border-space-red hover:bg-cream-light transition-all transform hover:scale-105 shadow-lg">
                           Try AI Recommendations
                       </a>
                   </div>
               </div>
           </section>
 
+          <!-- Animated Slider -->
           <div class="slider" style="
             --width: 100px;
             --height: 50px;
@@ -293,36 +433,14 @@
 
       </main>
 
-      <!-- Book Info Modal -->
-      <div id="bookModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl p-8 max-w-md mx-auto transform transition-all">
-              <div class="text-center">
-                  <div class="text-4xl mb-4">📖</div>
-                  <h3 id="bookTitle" class="text-2xl font-bold text-space-brown mb-2"></h3>
-                  <p id="bookAuthor" class="text-space-red font-semibold mb-4"></p>
-                  <p class="text-gray-600 mb-6">Click to add this book to your reading list!</p>
-                  <div class="flex gap-4 justify-center">
-                      <button onclick="addToReadingList()" class="bg-space-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
-                          Add to List
-                      </button>
-                      <button onclick="closeModal()" class="bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-400 transition-all">
-                          Close
-                      </button>
-                  </div>
-              </div>
+      <!-- Footer -->
+      <footer class="bg-space-brown text-white py-8">
+          <div class="container mx-auto px-6 text-center">
+              <p>&copy; 2025 My Book Space. All Rights Reserved to Jennifer :).</p>
           </div>
-      </div>
-
-    <footer class="bg-space-brown text-white py-8">
-      <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2025 My Book Space. All Rights Reserved to Jennifer :).</p>
-      </div>
-    </footer>
-
+      </footer>
     <script>
       
-      let currentBook = {};
-
       // Existing slider code
       let items = document.querySelectorAll('.item');
       items.forEach(item => {
@@ -341,38 +459,6 @@
               item.style.setProperty('--rY', '0deg');
           })
       })
-
-      // Book interaction functions
-      function showBookInfo(title, author) {
-          currentBook = { title, author };
-          document.getElementById('bookTitle').textContent = title;
-          document.getElementById('bookAuthor').textContent = `by ${author}`;
-          document.getElementById('bookModal').classList.remove('hidden');
-      }
-
-      function closeModal() {
-          document.getElementById('bookModal').classList.add('hidden');
-      }
-
-      function addToReadingList() {
-          // TODO: Implement actual add to reading list functionality
-          alert(`"${currentBook.title}" has been added to your reading list!`);
-          closeModal();
-      }
-
-      // Close modal when clicking outside
-      document.getElementById('bookModal').addEventListener('click', (e) => {
-          if (e.target.id === 'bookModal') {
-              closeModal();
-          }
-      });
-
-      // Close modal with Escape key
-      document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-              closeModal();
-          }
-      });
 
       // Generate random stars
         function createStars() {

@@ -1,25 +1,10 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
-import { getAuth, signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+import { auth } from './firebase-config.js';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-apiKey: "AIzaSyDn04LCckI_-sxQvHe4frnheCcvQSa6gCc",
-authDomain: "mybookspace-jennifer.firebaseapp.com",
-projectId: "mybookspace-jennifer",
-storageBucket: "mybookspace-jennifer.firebasestorage.app",
-messagingSenderId: "842011822044",
-appId: "1:842011822044:web:d801617e044c86be98f119",
-measurementId: "G-S48BPR0TDX"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
 
 const loginButton = document.getElementById("loginButton");
 
@@ -47,3 +32,35 @@ loginButton.addEventListener("click", (e) => {
             window.alert("Error occurred. Try again.");
         });
 });
+
+function googleLogin(){
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            const user = result.user;
+            console.log("Successfully signed in with google",user);
+            window.alert("Success! Welcome back!");
+            window.location.href = '../pages/dashboard.html';
+        }).catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            console.log("Error occurred. Try again.");
+            window.alert("Error occurred. Try again.");
+        });
+}
+// Function to initiate Google Sign-In via redirect
+function signInWithGoogleRedirect() {
+  const provider = new GoogleAuthProvider();
+  signInWithRedirect(auth, provider);
+}
+
+window.googleLogin = googleLogin; // Expose the function to the global scope

@@ -168,7 +168,7 @@
 .floating-book {
     position: absolute;
     width: 80px;
-    height: 100px;
+    height: 110px;
     border-radius: 4px;
     animation: bookFloat 6s ease-in-out infinite;
     box-shadow: 0 10px 20px rgba(139, 69, 19, 0.3);
@@ -186,7 +186,7 @@
 }
 
 .book-1 {
-    top: 20%;
+    top: 8%;
     left: 15%;
     animation-delay: 0s;
     background-image: url(images/botw1.jpg);
@@ -205,7 +205,7 @@
 }
 
 .book-3 {
-    top: 30%;
+    top: 14%;
     right: 5%;
     animation-delay: 4s;
     background-image: url(images/book1.png);

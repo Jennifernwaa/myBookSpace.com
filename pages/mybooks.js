@@ -50,7 +50,14 @@ function renderBooks() {
         <div class="book-card rounded-3xl p-6 shadow-lg" data-id="${book.id}">
             <div class="flex justify-between items-start mb-4">
                 <div class="flex-1">
-                    <h3 class="font-bold text-space-brown text-xl mb-2 font-serif">${book.title || ''}</h3>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-space-brown text-xl font-serif">${book.title || ''}</h3>
+                            ${
+                                tab === "finished"
+                                    ? `<button class="heart-button${book.favorite ? ' favorited' : ''}" onclick="toggleFavorite('${book.id}')">♥︎</button>`
+                                    : ''
+                            }
+                    </div>
                     <p class="text-warm-brown opacity-75 mb-3">by ${book.author || ''}</p>
                     ${statusBadge(book.status)}
                 </div>
@@ -99,6 +106,8 @@ function renderBooks() {
     // Add event listeners for edit and delete
     addBookCardListeners();
     updateTabCounts();
+
+    
 }
 
 // Add listeners for edit/delete buttons
@@ -278,8 +287,36 @@ window.switchTab = function(tab) {
 
 // Progress slider update
 document.getElementById('reading-progress').addEventListener('input', function() {
-    document.getElementById('progress-display').textContent = `${this.value}%`;
+    const slider = document.getElementById('reading-progress');
+    const display = document.getElementById('progress-display');
+        
+    function updateSliderBg() {
+        const val = slider.value;
+        slider.style.background = `linear-gradient(to right, #CB7666 ${val}%, #E8E2D5 ${val}%)`;
+        display.textContent = `${val}%`;
+    }
+slider.addEventListener('input', updateSliderBg);
+updateSliderBg();
 });
+
+window.toggleFavorite = async function(bookId) {
+    // Find the book in local array
+    const idx = allBooks.findIndex(b => b.id === bookId);
+    if (idx === -1) return;
+
+    // Toggle the favorite field (default to false if undefined)
+    const currentFavorite = !!allBooks[idx].favorite;
+    const newFavorite = !currentFavorite;
+
+    // Update Firestore
+    const bookRef = doc(db, "users", currentUser.uid, "books", bookId);
+    await updateDoc(bookRef, { favorite: newFavorite });
+
+    // Update local data and re-render
+    allBooks[idx].favorite = newFavorite;
+    renderBooks();
+};
+
 
 // Auth and load books
 onAuthStateChanged(auth, async (user) => {

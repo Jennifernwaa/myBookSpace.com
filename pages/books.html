@@ -250,21 +250,64 @@
     <script>
         // Load book data from sessionStorage
         function loadBookDetails() {
-            const bookData = sessionStorage.getItem('selectedBook');
-            
-            if (!bookData) {
-                showError();
-                return;
-            }
+    const bookData = sessionStorage.getItem('selectedBook');
+    if (!bookData) {
+        showError();
+        return;
+    }
+    let book;
+    try {
+        book = JSON.parse(bookData);
+        console.log('Loaded book data:', book);
+    } catch (error) {
+        console.error('Error parsing book data:', error);
+        showError();
+        return;
+    }
 
-            try {
-                const book = JSON.parse(bookData);
+    // If description exists, show immediately
+    if (book.description && book.description.trim() !== "") {
+        displayBookDetails(book);
+        return;
+    }
+
+    // If no description, try to fetch from Open Library by title
+    if (book.title) {
+        fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(book.title)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.docs && data.docs.length > 0 && data.docs[0].key) {
+                    // Fetch the work details for a real description
+                    fetch(`https://openlibrary.org${data.docs[0].key}.json`)
+                        .then(res2 => res2.json())
+                        .then(workData => {
+                            let foundDescription = "";
+                            if (typeof workData.description === "string") {
+                                foundDescription = workData.description;
+                            } else if (workData.description && workData.description.value) {
+                                foundDescription = workData.description.value;
+                            }
+                            book.description = foundDescription || `Discover the captivating world of "${book.title}" by ${book.author}.`;
+                            displayBookDetails(book);
+                        })
+                        .catch(() => {
+                            book.description = `Discover the captivating world of "${book.title}" by ${book.author}.`;
+                            displayBookDetails(book);
+                        });
+                } else {
+                    book.description = `Discover the captivating world of "${book.title}" by ${book.author}.`;
+                    displayBookDetails(book);
+                }
+            })
+            .catch(() => {
+                book.description = `Discover the captivating world of "${book.title}" by ${book.author}.`;
                 displayBookDetails(book);
-            } catch (error) {
-                console.error('Error parsing book data:', error);
-                showError();
-            }
-        }
+            });
+    } else {
+        book.description = "No description available.";
+        displayBookDetails(book);
+    }
+}
 
         function displayBookDetails(book) {
             const detailsContainer = document.getElementById('bookDetails');

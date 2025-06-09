@@ -27,7 +27,6 @@ const bio = document.getElementById('bio');
 const favoriteGenre = document.getElementById('favoriteGenre');
 
 const usernameInput = document.getElementById('usernameModal');
-
 const booksReadCard = document.getElementById('booksRead');
 const friendsCountCard = document.getElementById('friendsCount');
 
@@ -38,6 +37,71 @@ function getQueryParam(name) {
     const url = new URL(window.location.href);
     return url.searchParams.get(name);
 }
+
+
+// Fetch favorite books for a user (favorite === true)
+async function fetchFavoriteBooks(uid) {
+    const books = [];
+    const q = query(
+        collection(db, "users", uid, "books"),
+        where("favorite", "==", true)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+        books.push({ id: doc.id, ...doc.data() });
+    });
+    return books;
+}
+
+// Render favorite books UI
+async function renderFavoriteBooksSection(uid) {
+    const section = document.getElementById('favorite-books-section');
+    if (!section) return;
+
+    const grid = document.createElement('div');
+    grid.className = "grid grid-cols-2 md:grid-cols-4 gap-6";
+
+    const favoriteBooks = await fetchFavoriteBooks(uid);
+
+    // Make favoriteBooks globally accessible for viewBookDetails
+    window.lastFavoriteBooks = favoriteBooks;
+    if (favoriteBooks.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center text-warm-brown opacity-70 py-8">No favorite books yet.</div>`;
+    } else {
+        favoriteBooks.forEach(book => {
+            grid.innerHTML += `
+                <div class="text-center group cursor-pointer" onclick="viewBookDetails('${book.id}')">
+                    <div class="h-58 md:h-60 bg-gradient-to-br from-peach to-salmon rounded-2xl mb-4 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                        ${
+                            book.cover_url
+                                ? `<img src="${book.cover_url}" alt="${book.title}" class="object-cover w-full h-full rounded-2xl" />`
+                                : `<span class="text-white font-bold text-4xl md:text-5xl">📖</span>`
+                        }
+                    </div>
+                    <h4 class="font-semibold text-space-brown text-base md:text-lg truncate" title="${book.title}">${book.title || 'Untitled'}</h4>
+                    <p class="text-warm-brown text-sm md:text-base opacity-75 truncate" title="${book.author}">${book.author || ''}</p>
+                </div>
+            `;
+        });
+    }
+
+    // Replace the old grid with the new one
+    const oldGrid = section.querySelector('.grid');
+    if (oldGrid) {
+        oldGrid.replaceWith(grid);
+    } else {
+        section.appendChild(grid);
+    }
+}
+window.viewBookDetails = function(bookId) {
+    // Find the book in the current favoriteBooks array
+    // You may want to pass the whole book object instead of just the ID for sessionStorage
+    const book = window.lastFavoriteBooks?.find(b => b.id === bookId);
+    if (book) {
+        sessionStorage.setItem('selectedBook', JSON.stringify(book));
+        window.location.href = 'books.html';
+    }
+};
 
 // Main profile loading logic
 onAuthStateChanged(auth, async (user) => {
@@ -86,6 +150,8 @@ onAuthStateChanged(auth, async (user) => {
         const editBtns = document.querySelectorAll('.action-btn, #editProfileModal');
         editBtns.forEach(btn => btn.style.display = 'none');
     }
+
+    await renderFavoriteBooksSection(profileUid);
 
 });
 
@@ -137,21 +203,7 @@ async function fetchBooksByStatus(uid, status) {
     return books;
 }
 
-async function fetchFriendCount() {
-    try {
-        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-        if (userDoc.exists()) {
-            const data = userDoc.data();
-            const friendsObj = data.friends || {};
-            return Object.keys(friendsObj).length;
-        } else {
-            return 0;
-        }
-    } catch (error) {
-        console.error('Error fetching friend count:', error);
-        return 0;
-    }
-}
+
 
 // Add some interactive functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -175,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Modal functions
+    // Open Modal functions
     function openModal() {
         loadUserProfile(); 
         modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -185,6 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden';
     }
 
+    // Close modal function
     function closeModal() {
         modal.classList.add('opacity-0', 'pointer-events-none');
         modal.classList.remove('opacity-100');
@@ -353,3 +406,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+

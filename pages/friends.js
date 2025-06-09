@@ -244,21 +244,17 @@ function createPostElement(post, postId) {
                 <p class="text-space-brown leading-relaxed whitespace-pre-wrap break-words">${post.content}</p>
                 <div class="flex items-center space-x-4 mt-4 pt-3 border-t border-cream-medium">
                     <button class="flex items-center space-x-2 text-warm-brown hover:text-rose-red transition-colors group">
-                        <span class="text-lg group-hover:animate-pulse">💕</span>
+                        <img src="../images/icons8-like-24.png" alt="Like" class="w-5 h-5">
                         <span class="text-sm font-medium">Like</span>
                     </button>
                     <button class="flex items-center space-x-2 text-warm-brown hover:text-rose-red transition-colors group">
-                        <span class="text-lg group-hover:animate-pulse">💬</span>
+                        <img src="../images/icons8-comment-24.png" alt="Comment" class="w-5 h-5">
                         <span class="text-sm font-medium">Comment</span>
                     </button>
-                    <button class="flex items-center space-x-2 text-warm-brown hover:text-rose-red transition-colors group">
-                        <span class="text-lg group-hover:animate-pulse">📚</span>
-                        <span class="text-sm font-medium">Recommend</span>
-                    </button>
                     ${isOwnPost ? `
-                        <button class="ml-auto flex items-center space-x-2 text-red-600 hover:text-red-700 transition-colors group" onclick="deletePost('${post.postId}', '${post.authorId}')">
+                        <button class="ml-auto flex items-center space-x-2 text-black hover:text-red-700 transition-colors group" onclick="deletePost('${post.postId}', '${post.authorId}')">
+                            <img src=../images/icons8-delete-24.png alt="Delete" class="w-5 h-5>
                             <span class="text-sm font-medium">Delete</span>
-                            <span class="text-sm group-hover:animate-pulse">🗑️</span>
                         </button>
                     ` : ''}
                 </div>
@@ -305,7 +301,6 @@ window.deletePost = async function(postId, authorId) {
         showNotification("Post deleted successfully! 🗑️", "success");
     } catch (error) {
         console.error('Error deleting post:', error);
-        showNotification("Failed to delete post. Please try again. 😔", "error");
     }
 };
 
@@ -345,7 +340,7 @@ function createUserCard(user, isFriend, isSearch = false) {
                     <p class="text-sm text-warm-brown opacity-70">${user.email || ""}</p>
                 </div>
             </div>
-            <button class="${isFriend ? "bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-700" : "add-friend-btn"} text-white px-6 py-3 rounded-xl font-semibold transition-all relative z-10"
+            <button class="${isFriend ? "bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-700" : "add-friend-btn"} text-space-red px-6 py-3 rounded-xl font-semibold transition-all relative z-10"
                 data-userid="${user.id}">
                 <span class="relative z-10">${isFriend ? "Remove Friend" : "Add Friend"}</span>
             </button>
@@ -368,17 +363,13 @@ function createUserCard(user, isFriend, isSearch = false) {
                     </div>
                 </div>
                 <div class="bg-cream-light bg-opacity-50 rounded-xl p-4 mb-4">
-                    <p class="text-sm text-warm-brown opacity-80 italic">
-                        "Currently reading: The Midnight Library ✨"
+                    <p class="text-sm text-warm-brown opacity-80 italic">Welcome to myBookSpace!</p>
                     </p>
                 </div>
                 <div class="flex justify-between items-center">
                     <div class="flex space-x-2">
-                        <button class="bg-gradient-to-r from-peach to-salmon text-white px-6 py-2 rounded-lg font-medium hover:scale-105 transition-all">
-                            Chat
-                        </button>
-                        <button class="bg-salmon text-white px-5 py-2 rounded-lg font-medium hover:scale-105 transition-all">
-                            View Books
+                        <button id="viewProfile" class="bg-salmon text-white px-5 py-2 rounded-lg font-medium hover:scale-105 transition-all">
+                            View Profile
                         </button>
                     </div>
                     <button class="bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-700 text-white px-7 py-2 rounded-lg font-medium transition-all hover:scale-105"
@@ -471,12 +462,14 @@ function renderFriendsList() {
         card.style.animationDelay = `${index * 0.1}s`;
         friendsList.appendChild(card);
 
-        // Add click event to redirect to friend's profile
-        card.addEventListener('click', function(e) {
-            // Prevent click if Remove button is clicked
-            if (e.target.closest('button')) return;
-            window.location.href = `profile.html?uid=${user.id}`;
-        });
+        // Add click event for the "View Profile" button
+        const viewProfileBtn = card.querySelector('#viewProfile');
+        if (viewProfileBtn) {
+            viewProfileBtn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card click event
+                window.location.href = `profile.html?uid=${user.id}`;
+            });
+        }
     });
 }
 

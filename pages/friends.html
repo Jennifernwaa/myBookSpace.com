@@ -84,7 +84,6 @@
             position: relative;
         }
         
-        
         /* Cozy fireplace effect */
         body::before {
             content: '';
@@ -109,7 +108,6 @@
             backdrop-filter: blur(15px);
             border-bottom: 2px solid rgba(203, 118, 102, 0.3);
             box-shadow: 0 4px 20px rgba(57, 19, 6, 0.1);
-
         }
         
         .glass-card {
@@ -250,21 +248,118 @@
             box-shadow: 0 10px 30px rgba(169, 61, 73, 0.3);
         }
 
+        /* Responsive improvements */
+        @media (max-width: 1024px) {
+            .floating-element { display: none; }
+        }
+
         @media (max-width: 768px) {
             .floating-element { display: none; }
             
-            nav.cosmic-nav {
-            display: block !important;
+            /* Mobile navigation adjustments */
+            .cosmic-nav {
+                display: none !important;
             }
-            .md\:hidden {
-            display: block !important;
+            
+            /* Adjust grid for mobile */
+            .parent {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+            
+            /* Make sections stack vertically on mobile */
+            .parent > section {
+                width: 100% !important;
+                min-height: auto !important;
+            }
+            
+            /* Adjust friends section for mobile */
+            #friends-section {
+                order: 2;
+                max-height: 400px;
+            }
+            
+            /* Search section adjustments */
+            #search-section {
+                order: 1;
+            }
+            
+            /* Feed section adjustments */
+            #feed-section {
+                order: 3;
+                min-height: 600px;
+            }
+            
+            /* Typography adjustments */
+            .text-4xl { font-size: 2rem !important; }
+            .text-6xl { font-size: 2.5rem !important; }
+            .text-2xl { font-size: 1.5rem !important; }
+            
+            /* Spacing adjustments */
+            .p-8 { padding: 1rem !important; }
+            .p-6 { padding: 0.75rem !important; }
+            .py-12 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+            .mb-12 { margin-bottom: 2rem !important; }
+            
+            /* Input adjustments */
+            .search-input, .post-textarea {
+                font-size: 1rem !important;
+                padding: 0.75rem 1rem !important;
             }
         }
 
-        @media (min-width: 768px) {
-        .md\:hidden {
-            display: none !important;
+        @media (max-width: 640px) {
+            /* Extra small screen adjustments */
+            .px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+            .text-lg { font-size: 1rem !important; }
+            .text-xl { font-size: 1.125rem !important; }
+            
+            /* Button adjustments */
+            .search-btn, .action-btn {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 0.875rem !important;
+            }
+            
+            /* Avatar adjustments */
+            .w-12 { width: 2.5rem !important; }
+            .h-12 { height: 2.5rem !important; }
+            .w-10 { width: 2rem !important; }
+            .h-10 { height: 2rem !important; }
         }
+
+        /* Tablet specific adjustments */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .parent {
+                grid-template-columns: 1fr 2fr !important;
+                grid-template-rows: auto auto 1fr !important;
+            }
+            
+            /* Friends section spans full width on tablet */
+            #friends-section {
+                grid-column: 1 / -1 !important;
+                grid-row: 1 !important;
+                max-height: 300px;
+            }
+            
+            /* Search section */
+            #search-section {
+                grid-column: 1 / -1 !important;
+                grid-row: 2 !important;
+            }
+            
+            /* Feed section */
+            #feed-section {
+                grid-column: 1 / -1 !important;
+                grid-row: 3 !important;
+            }
+        }
+
+        /* Large screen optimizations */
+        @media (min-width: 1280px) {
+            .max-w-7xl {
+                max-width: 90rem !important;
+            }
         }
     </style>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
@@ -273,25 +368,26 @@
 <body>
     <!-- Navigation -->
     <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
-        <div class="container mx-auto px-6">
+        <div class="container mx-auto px-4 lg:px-6">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-8">
-                    <h1 class="text-2xl font-bold font-serif text-space-brown flex items-center">
-                        <a href="dashboard.html" >myBookSpace</a></h1>
-                    <div class="hidden md:flex space-x-6">
-                        <a href="mybooks.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">My Books</a>
-                        <a href="friends.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-3 py-2">Friends & Feed</a>
-                        <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Recommendations</a>
+                <div class="flex items-center space-x-4 lg:space-x-8">
+                    <h1 class="text-xl lg:text-2xl font-bold font-serif text-space-brown flex items-center">
+                        <a href="dashboard.html">myBookSpace</a>
+                    </h1>
+                    <div class="hidden md:flex space-x-4 lg:space-x-6">
+                        <a href="mybooks.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-2 lg:px-3 py-2 rounded-lg text-sm lg:text-base">My Books</a>
+                        <a href="friends.html" class="text-rose-red font-semibold border-b-2 border-rose-red pb-1 transition-all px-2 lg:px-3 py-2 text-sm lg:text-base">Friends & Feed</a>
+                        <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-2 lg:px-3 py-2 rounded-lg text-sm lg:text-base">Recommendations</a>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="hidden md:flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
-                            <span class="text-white text-sm font-semibold">👤</span>
+                <div class="flex items-center space-x-2 lg:space-x-4">
+                    <div class="hidden md:flex items-center space-x-2 lg:space-x-3">
+                        <div class="w-8 lg:w-10 h-8 lg:h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xs lg:text-sm font-semibold">👤</span>
                         </div>
-                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span>
+                        <span id="nav-user-name" class="text-space-brown font-medium text-sm lg:text-base">Reader</span>
                     </div>
-                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
+                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-3 lg:px-4 py-2 rounded-lg hover:bg-cream-light text-sm lg:text-base" id="logout">
                         Logout
                     </button>
                 </div>
@@ -300,140 +396,137 @@
     </nav>
 
     <!-- Mobile Navigation -->
-    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">
+    <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg fixed bottom-0 left-0 right-0 z-50">
         <div class="flex justify-around py-3">
             <a href="dashboard.html" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1"></span>
+                <img src="../images/icons8-home-48 (1).png" alt="Home" class="w-6 h-6 mb-1">
                 <span class="text-xs font-medium">Dashboard</span>
             </a>
             <a href="friends.html" class="flex flex-col items-center p-2 text-rose-red animate-pulse-gentle">
-                <span class="text-xl mb-1"></span>
-                <span class="text-xs">Friends & Feed</span>
+                <img src="../images/icons8-friends-48.png" alt="Friends" class="w-6 h-6 mb-1">
+                <span class="text-xs">Friends</span>
             </a>
             <a href="../recommendations.html" class="flex flex-col items-center p-2 text-warm-brown hover:text-rose-red transition-colors">
-                <span class="text-xl mb-1"></span>
+                <img src="../images/icons8-book-24.png" alt="Recommendations" class="w-6 h-6 mb-1">
                 <span class="text-xs">Recommendations</span>
             </a>
         </div>
     </div>
 
-    <br>
-    <br>
+    <!-- Page Header -->
+    <div class="text-center mb-8 lg:mb-12 animate-fade-in-up px-4">
+        <h1 class="text-3xl md:text-4xl lg:text-6xl font-bold gradient-text mb-4 lg:mb-6 font-serif">
+            <span class="animate-wiggle inline-block">🫂</span> Friends & Feed <span class="animate-wiggle inline-block">🫂</span>
+        </h1>
+        <p class="text-warm-brown text-base md:text-lg lg:text-xl opacity-90 max-w-3xl mx-auto leading-relaxed px-4">
+            Build your cozy reading community, share favorite passages, and discover magical stories together in our warm literary haven
+        </p>
+    </div>
 
-                <!-- Page Header -->
-        <div class="text-center mb-12 animate-fade-in-up">
-            <h1 class="text-4xl md:text-6xl font-bold gradient-text mb-6 font-serif">
-                <span class="animate-wiggle inline-block">🫂</span> Friends & Feed <span class="animate-wiggle inline-block">🫂</span>
-            </h1>
-            <p class="text-warm-brown text-lg md:text-xl opacity-90 max-w-3xl mx-auto leading-relaxed">
-                Build your cozy reading community, share favorite passages, and discover magical stories together in our warm literary haven
-            </p>
-        </div>
+    <main class="parent grid grid-cols-1 md:grid-cols-5 md:grid-rows-5 gap-4 max-w-7xl mx-auto py-4 md:py-12 px-4 md:px-8 mb-20 md:mb-0">
 
-    <main class="parent grid grid-cols-5 grid-rows-5 gap-4 max-w-7xl mx-auto py-12 px-4 md:px-8">
+        <!-- Friends List -->
+        <section id="friends-section" class="md:col-span-2 md:row-span-5 bg-white/80 rounded-2xl lg:rounded-3xl shadow-lg p-4 md:p-6 flex flex-col overflow-y-auto min-h-[300px] md:min-h-[400px]">
+            <h2 class="text-xl md:text-2xl font-bold text-space-brown mb-4 md:mb-6 font-serif flex items-center">
+                <span class="mr-2 md:mr-3 text-2xl md:text-3xl animate-warm-pulse">🤗</span>
+                Friends
+            </h2>
+            <div class="mb-4 text-warm-brown opacity-75 bg-cream-light px-3 md:px-4 py-2 rounded-full text-center">
+                <span class="font-medium text-sm md:text-lg" id="friendCountDisplay">0 wonderful friends</span>
+            </div>
+            <div id="friends-list" class="flex-1 flex flex-col gap-3 md:gap-4 overflow-y-auto">
+                <!-- Friends will be populated here -->
+            </div>
+            <div id="emptyState" class="hidden mt-6 md:mt-8 text-center text-warm-brown opacity-70">
+                <div class="text-4xl md:text-5xl mb-2">🫂</div>
+                <p class="text-sm md:text-base">No friends yet. Search to add some!</p>
+            </div>
+        </section>
 
-    <!-- Friends List (div1) -->
-    <section class="col-span-2 row-span-5 bg-white/80 rounded-3xl shadow-lg p-6 flex flex-col overflow-y-auto min-h-[400px]">
-        <h2 class="text-2xl font-bold text-space-brown mb-6 font-serif flex items-center">
-            <span class="mr-3 text-3xl animate-warm-pulse">🤗</span>
-            Friends
-        </h2>
-        <div class="mb-4 text-warm-brown opacity-75 bg-cream-light px-4 py-2 rounded-full text-center">
-            <span class="font-medium text-lg" id="friendCountDisplay">0 wonderful friends</span>
-        </div>
-        <div id="friends-list" class="flex-1 flex flex-col gap-4 overflow-y-auto">
-            <!-- Friends will be populated here -->
-        </div>
-        <div id="emptyState" class="hidden mt-8 text-center text-warm-brown opacity-70">
-            <div class="text-5xl mb-2">🫂</div>
-            <p>No friends yet. Search to add some!</p>
-        </div>
-    </section>
+        <!-- Search Friends -->
+        <section id="search-section" class="md:col-span-3 md:row-span-1 bg-white/80 rounded-2xl lg:rounded-3xl shadow-lg p-4 md:p-8 flex flex-col justify-center">
+            <h2 class="text-lg md:text-2xl font-semibold text-space-brown mb-3 md:mb-4 font-serif flex items-center">
+                <span class="mr-2 md:mr-3 text-2xl md:text-3xl animate-wiggle">🔍</span>
+                Find Your Next Reading Companion
+            </h2>
+            <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-4 md:mb-5">
+                <input 
+                    type="text" 
+                    placeholder="Search by username or email... ✨" 
+                    class="search-input flex-1 px-4 md:px-10 py-3 md:py-5 rounded-xl md:rounded-2xl text-space-brown placeholder-warm-brown placeholder-opacity-60 text-base md:text-lg"
+                    id="searchInput"
+                >
+                <button class="search-btn text-white px-6 md:px-9 py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold flex items-center justify-center space-x-2 md:space-x-3 text-base md:text-lg">
+                    <span>Search</span>
+                    <span class="text-lg md:text-xl animate-pulse">🔎</span>
+                </button>
+            </div>
+            <div id="searchResults" class="space-y-3 md:space-y-4">
+                <!-- Search results will be populated here -->
+            </div>
+        </section>
 
-
-
-    <!-- Search Friends (div2) -->
-    <section class="col-span-3 row-span-1 bg-white/80 rounded-3xl shadow-lg p-8 flex flex-col justify-center">
-        <h2 class="text-2xl font-semibold text-space-brown mb-4 font-serif flex items-center">
-            <span class="mr-3 text-3xl animate-wiggle">🔍</span>
-            Find Your Next Reading Companion
-        </h2>
-        <div class="flex flex-col sm:flex-row gap-4 mb-5">
-            <input 
-                type="text" 
-                placeholder="Search by username or email... ✨" 
-                class="search-input flex-1 px-10 py-5 rounded-2xl text-space-brown placeholder-warm-brown placeholder-opacity-60 text-lg"
-                id="searchInput"
-            >
-            <button class="search-btn text-white px-9 py-4 rounded-2xl font-semibold flex items-center justify-center space-x-3 text-lg">
-                <span>Search</span>
-                <span class="text-xl animate-pulse">🔎</span>
-            </button>
-        </div>
-        <div id="searchResults" class="space-y-4">
-            <!-- Search results will be populated here -->
-        </div>
-    </section>
-
-    <!-- Feed/Activity (div3) -->
-    <section class="col-span-3 row-span-4 col-start-3 row-start-2 bg-white/80 rounded-3xl shadow-lg p-8 flex flex-col">
-        <h2 class="text-2xl font-semibold text-space-brown mb-6 font-serif flex items-center">
-            <span class="mr-4 text-4xl animate-cozy-bounce">📝</span>
-            Recent Friend Activity
-        </h2>
-        <!-- Create Post Box -->
-        <div class="glass-card rounded-2xl p-6 mb-8 animate-fade-in-up">
-            <div class="flex items-start space-x-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-peach to-salmon rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                    <span class="text-white font-semibold" id="currentUserInitial"></span>
-                </div>
-                <div class="flex-1">
-                    <textarea 
-                        id="postContent"
-                        class="post-textarea w-full min-h-[60px] max-h-40 px-4 py-3 rounded-xl text-space-brown placeholder-warm-brown placeholder-opacity-60 text-lg resize-none mb-2"
-                        maxlength="500"
-                        placeholder="Share your latest book thoughts, discoveries, or cozy reading moments... 📚✨"
-                    ></textarea>
-                    <div class="flex items-center justify-between">
-                        <span id="charCount" class="text-sm text-warm-brown opacity-70">0/500 characters</span>
-                        <button id="createPostBtn" class="action-btn text-white px-6 py-2 rounded-xl font-semibold flex items-center space-x-2">
-                            <span>Post</span>
-                            <span class="text-lg">🚀</span>
-                        </button>
+        <!-- Feed/Activity -->
+        <section id="feed-section" class="md:col-span-3 md:row-span-4 md:col-start-3 md:row-start-2 bg-white/80 rounded-2xl lg:rounded-3xl shadow-lg p-4 md:p-8 flex flex-col">
+            <h2 class="text-lg md:text-2xl font-semibold text-space-brown mb-4 md:mb-6 font-serif flex items-center">
+                <span class="mr-2 md:mr-4 text-3xl md:text-4xl animate-cozy-bounce">📝</span>
+                Recent Friend Activity
+            </h2>
+            
+            <!-- Create Post Box -->
+            <div class="glass-card rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-8 animate-fade-in-up">
+                <div class="flex items-start space-x-3 md:space-x-4">
+                    <div class="w-10 md:w-12 h-10 md:h-12 bg-gradient-to-br from-peach to-salmon rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                        <span class="text-white font-semibold text-sm md:text-base" id="currentUserInitial"></span>
+                    </div>
+                    <div class="flex-1">
+                        <textarea 
+                            id="postContent"
+                            class="post-textarea w-full min-h-[50px] md:min-h-[60px] max-h-32 md:max-h-40 px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl text-space-brown placeholder-warm-brown placeholder-opacity-60 text-sm md:text-lg resize-none mb-2"
+                            maxlength="500"
+                            placeholder="Share your latest book thoughts, discoveries, or cozy reading moments... 📚✨"
+                        ></textarea>
+                        <div class="flex items-center justify-between">
+                            <span id="charCount" class="text-xs md:text-sm text-warm-brown opacity-70">0/500 characters</span>
+                            <button id="createPostBtn" class="action-btn text-white px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl font-semibold flex items-center space-x-1 md:space-x-2 text-sm md:text-base">
+                                <span>Post</span>
+                                <span class="text-base md:text-lg">🚀</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Loading and Empty States -->
-        <div id="loadingState" class="text-center py-8 hidden">
-            <div class="text-4xl mb-2 animate-pulse">⏳</div>
-            <p class="text-warm-brown opacity-70">Loading your feed...</p>
-        </div>
-        <div id="emptyFeedState" class="hidden text-center py-8">
-            <div class="text-5xl mb-2">📭</div>
-            <p class="text-warm-brown opacity-70">No posts yet. Share something to start your feed!</p>
-        </div>
-        <div class="space-y-4 flex-1 overflow-y-auto" id="postsFeed"></div>
-        <div class="space-y-4 flex-1 overflow-y-auto" id="activityFeed">
-            <!-- Activity feed will be populated here -->
-        </div>
-    </section>
-</main>
+            
+            <!-- Loading and Empty States -->
+            <div id="loadingState" class="text-center py-6 md:py-8 hidden">
+                <div class="text-3xl md:text-4xl mb-2 animate-pulse">⏳</div>
+                <p class="text-warm-brown opacity-70 text-sm md:text-base">Loading your feed...</p>
+            </div>
+            <div id="emptyFeedState" class="hidden text-center py-6 md:py-8">
+                <div class="text-4xl md:text-5xl mb-2">📭</div>
+                <p class="text-warm-brown opacity-70 text-sm md:text-base">No posts yet. Share something to start your feed!</p>
+            </div>
+            <div class="space-y-3 md:space-y-4 flex-1 overflow-y-auto min-h-64 md:min-h-72" id="postsFeed">
+                <!-- Posts will be populated here -->
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="mt-20 bg-gradient-to-r from-space-brown via-warm-brown to-salmon text-cream-light py-16">
-        <div class="container mx-auto px-6 text-center">
-            <div class="mb-6">
-                <p class="text-2xl opacity-90 mb-4 handwritten">📚 "Books are meant to be shared, stories are meant to connect hearts" 📚</p>
-                <div class="flex justify-center space-x-4 text-3xl">
+    <footer class="mt-12 md:mt-20 bg-gradient-to-r from-space-brown via-warm-brown to-salmon text-cream-light py-12 md:py-16">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <div class="mb-4 md:mb-6">
+                <p class="text-lg md:text-2xl opacity-90 mb-3 md:mb-4 handwritten">📚 "Books are meant to be shared, stories are meant to connect hearts" 📚</p>
+                <div class="flex justify-center space-x-3 md:space-x-4 text-2xl md:text-3xl">
                     <span class="animate-cozy-bounce">☕</span>
                     <span class="animate-cozy-bounce" style="animation-delay: 0.5s;">📖</span>
                     <span class="animate-cozy-bounce" style="animation-delay: 1s;">💕</span>
                 </div>
             </div>
-            <p class="opacity-70 text-lg">&copy; 2025 My Book Space. Where every page brings us closer together.</p>
+            <p class="opacity-70 text-base md:text-lg">&copy; 2025 My Book Space. Where every page brings us closer together.</p>
         </div>
     </footer>
+
+    <script type="module" src="friends.js"></script>
 </body>
-<script type="module" src="friends.js"></script>
 </html>

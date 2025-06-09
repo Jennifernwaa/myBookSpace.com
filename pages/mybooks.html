@@ -175,6 +175,38 @@
         @media (max-width: 768px) {
             .floating-book { display: none; }
         }
+        .heart-button{
+            width: 70px;
+            height: 70px;
+            color: #d1d5db;
+            border-radius: 50%;
+            font-size: 2.5rem; 
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .heart-button:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            transform: scale(1.13);
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25);
+        }
+        
+        .heart-button.favorited {
+            color: #ef4444;
+            animation: heartBeat 0.6s ease-in-out;
+            background-color: rgba(239, 68, 68, 0.22);
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25);
+        }
+        
+        .heart-button:not(.favorited) {
+            color: #7b7d80;      
+        }
+        
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 
@@ -348,34 +380,7 @@
             <!-- Finished Books -->
             <div id="finished-books" class="books-section hidden">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Book Card 1 -->
-                    <div class="book-card rounded-3xl p-6 shadow-lg">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex-1">
-                                <h3 class="font-bold text-space-brown text-xl mb-2 font-serif">The Hobbit</h3>
-                                <p class="text-warm-brown opacity-75 mb-3">by J.R.R. Tolkien</p>
-                                <span class="status-badge finished px-3 py-1 rounded-full text-sm font-medium">Finished</span>
-                            </div>
-                            <div class="text-4xl opacity-20">🏔️</div>
-                        </div>
-                        <div class="flex items-center mb-4">
-                            <span class="text-warm-brown text-sm mr-2">Rating:</span>
-                            <div class="flex">
-                                <span class="star-rating filled text-lg">★★★★★</span>
-                            </div>
-                            <span class="text-warm-brown text-sm ml-2 font-semibold">5.0</span>
-                        </div>
-                        <div class="flex gap-3">
-                            <button class="edit-button flex-1 py-2 px-4 rounded-xl font-medium text-sm">
-                                Edit Rating
-                            </button>
-                            <button class="delete-button py-2 px-4 rounded-xl font-medium text-sm">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Book Card 2 -->
+                    <!-- Book Card -->
                     <div class="book-card rounded-3xl p-6 shadow-lg">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex-1">
@@ -402,7 +407,7 @@
                         </div>
                     </div>
 
-                    <!-- Book Card 3 -->
+                    <!-- Book Card-->
                     <div class="book-card rounded-3xl p-6 shadow-lg">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex-1">
@@ -460,12 +465,12 @@
             <form class="space-y-6">
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Book Title</label>
-                    <input type="text" id="wtr-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title">
+                    <input type="text" id="wtr-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title" readonly>
                 </div>
                 
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Author</label>
-                    <input type="text" id="wtr-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name">
+                    <input type="text" id="wtr-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name" readonly>
                 </div>
                 
                 <div>
@@ -500,18 +505,19 @@
             <form class="space-y-6">
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Book Title</label>
-                    <input type="text" id="reading-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title">
+                    <input type="text" id="reading-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title" readonly>
                 </div>
                 
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Author</label>
-                    <input type="text" id="reading-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name">
+                    <input type="text" id="reading-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name" readonly>
                 </div>
                 
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Reading Progress</label>
                     <div class="space-y-3">
-                        <input type="range" id="reading-progress" min="0" max="100" value="50" class="w-full h-2 bg-cream-medium rounded-lg appearance-none cursor-pointer">
+                        <input type="range" id="reading-progress" min="0" max="100" value="50" class="w-full h-2 bg-cream-medium rounded-lg appearance-none cursor-pointer"
+                            style="background: linear-gradient(to right, #CB7666 50%, #E8E2D5 50%);">
                         <div class="flex justify-between text-sm text-warm-brown">
                             <span>0%</span>
                             <span id="progress-display" class="font-semibold text-salmon">50%</span>
@@ -519,6 +525,7 @@
                         </div>
                     </div>
                 </div>
+
                 
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Reading Status</label>
@@ -552,12 +559,12 @@
             <form class="space-y-6">
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Book Title</label>
-                    <input type="text" id="finished-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title">
+                    <input type="text" id="finished-title" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter book title" readonly>
                 </div>
                 
                 <div>
                     <label class="block text-warm-brown font-medium mb-2">Author</label>
-                    <input type="text" id="finished-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name">
+                    <input type="text" id="finished-author" class="w-full px-4 py-3 rounded-xl border border-salmon/20 bg-white/70 focus:border-salmon focus:outline-none transition-colors" placeholder="Enter author name" readonly>
                 </div>
                 
                 <div>

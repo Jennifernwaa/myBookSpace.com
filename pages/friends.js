@@ -576,6 +576,7 @@ if (searchBtn) {
     });
 }
 
+// Handle Logout
 if (logoutBtn) {
     logoutBtn.addEventListener('click', logout);
 }
@@ -591,3 +592,5 @@ window.addEventListener('beforeunload', () => {
         feedUnsubscribe();
     }
 });
+
+window.logout = logout;

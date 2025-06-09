@@ -371,6 +371,7 @@ const db = getFirestore(app);
 let currentUser = null;   
 let userBooks = []; 
 
+
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.href = "/login-signup/login.html"
@@ -391,6 +392,17 @@ onAuthStateChanged(auth, async (user) => {
     // Fetch user's books for personalized recommendations
     await fetchUserBooks();
 });
+
+// Logout function
+async function logout() {
+    try {
+        await signOut(auth);
+        window.location.href = '../index.html';
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out. Please try again.');
+    }
+}
 
 async function fetchUserBooks() {
         try {
@@ -626,7 +638,16 @@ function createStars() {
                 // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
+
+            // Logout button
+            const logoutBtn = document.getElementById('logout');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
         });
+
+
+        window.logout = logout;
       </script>
   </body>
 </html>

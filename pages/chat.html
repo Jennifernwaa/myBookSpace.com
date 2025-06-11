@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Page</title>
+  <style>
+    .chat-container {
+  width: 400px;
+  margin: auto;
+  font-family: sans-serif;
+}
+.chat-box {
+  height: 300px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+  </style>
+  <script defer src="https://mybookspace-chat.up.railway.app/socket.io/socket.io.js"></script>
+  <script defer src="chat.js"></script>
+</head>
+<body>
+  <div class="chat-container">
+    <h1>Simple Chat App</h1>
+    <input type="text" id="name" placeholder="Enter your name and press Enter">
+    <select id="recipient">
+      <option value="">Everyone (Public)</option>
+    </select>
+    <div id="content" class="chat-box"></div>
+    <div class="controls">
+      <input type="text" id="field" placeholder="Type a message">
+      <button id="send">Send</button>
+    </div>
+  </div>
+</body>
+</html>

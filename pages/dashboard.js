@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebas
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
 import { getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, where, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+import { fetchBooksByStatus } from './functions/fetchBookStatus.js';
 
 // Your Firebase config
 const firebaseConfig = {
@@ -30,6 +31,7 @@ onAuthStateChanged(auth, async (user) => {
         if (user.emailVerified){
             currentUser = user;
 
+            console.log("Current user:", user);
             // Fetch all books
             const q = query(collection(db, "users", currentUser.uid, "books"));
             const snapshot = await getDocs(q);
@@ -57,9 +59,9 @@ async function loadUserData() {
                 showNameEntryModal();
             } else {
                 // Fetch books by status
-                userData.reading = await fetchBooksByStatus("reading");
-                userData.booksRead = await fetchBooksByStatus("finished");
-                userData.wantToRead = await fetchBooksByStatus("wantToRead");
+                    userData.reading = await fetchBooksByStatus(currentUser.uid, "reading");
+                    userData.booksRead = await fetchBooksByStatus(currentUser.uid, "finished");
+                    userData.wantToRead = await fetchBooksByStatus(currentUser.uid, "wantToRead");
                 showDashboard();
             }
 
@@ -73,21 +75,6 @@ async function loadUserData() {
         showNameEntryModal();
     }
 }
-
-// Fetch books by status from users/{uid}/books
-async function fetchBooksByStatus(status) {
-    const books = [];
-    const q = query(
-        collection(db, "users", currentUser.uid, "books"),
-        where("status", "==", status)
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        books.push({ id: doc.id, ...doc.data() });
-    });
-    return books;
-}
-
 // Show/hide dashboard functions
 function hideDashboard() {
     const mainContent = document.querySelector('main');
@@ -671,6 +658,21 @@ function findElementByText(selector, text) {
     return Array.from(elements).find(el => el.textContent.includes(text));
 }
 
+// Dropdown toggle function
+function toggleDropdown() {
+    const dropdown = document.getElementById('user-dropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('user-dropdown');
+    const button = event.target.closest('button');
+    
+    if (!button || !button.onclick || button.onclick.toString().indexOf('toggleDropdown') === -1) {
+        dropdown.classList.add('hidden');
+    }
+})
 // Progress slider update
 document.getElementById('reading-progress').addEventListener('input', function() {
     document.getElementById('progress-display').textContent = `${this.value}%`;
@@ -699,3 +701,4 @@ window.closeReadingModal = closeReadingModal;
 
 // Export functions for global access
 window.logout = logout;
+window.toggleDropdown = toggleDropdown;

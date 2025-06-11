@@ -239,7 +239,7 @@
     <div class="floating-book floating-book-2 text-5xl">📖</div>
     <div class="floating-book floating-book-3 text-4xl">📝</div>
 
-    <!-- Navigation -->
+<!-- Navigation -->
     <nav class="cosmic-nav shadow-lg sticky top-0 z-50 hidden md:block">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
@@ -252,22 +252,25 @@
                         <a href="../recommendations.html" class="text-warm-brown hover:text-rose-red transition-all duration-300 px-3 py-2 rounded-lg">Recommendations</a>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <!-- Start of Profile -->
-                    <div class="hidden md:flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-salmon to-rose-red rounded-full flex items-center justify-center shadow-lg"><a href="profile.html">
-                            <span class="text-white text-sm font-semibold">👤</span>
-                        </div>
-                        <span id="nav-user-name" class="text-space-brown font-medium">Reader</span></a>
-                    </div>
-                    <!-- End of Profile -->
-                    <button class="text-warm-brown hover:text-rose-red transition-colors font-medium px-4 py-2 rounded-lg hover:bg-cream-light" id="logout">
-                        Logout
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button class="flex items-center space-x-2 text-space-brown hover:text-space-red transition-colors" onclick="toggleDropdown()">
+                        <img src="../images/icons8-setting-30.png">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </button>
+                    
+                    <!-- Dropdown menu -->
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a href="profile.html" class="block px-4 py-2 text-sm text-space-brown hover:bg-cream-light">Profile Settings</a>
+                        <button onclick="logout()" class="block w-full text-left px-4 py-2 text-sm text-space-brown hover:bg-cream-light">Sign Out</button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
+
 
     <!-- Mobile Navigation -->
     <div class="md:hidden bg-cream-light bg-opacity-95 backdrop-blur-md border-t border-cream-medium shadow-lg">

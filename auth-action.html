@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Action Handler</title>
+    <script type="module">
+        // Import the Firebase SDK modules you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, verifyPasswordResetCode, confirmPasswordReset, applyActionCode, checkActionCode, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        // IMPORTANT: Replace with your Firebase project's actual config
+        // You can find this in your Firebase Console -> Project settings -> General
+        // Look for "Your apps" section and copy the Web App configuration snippet.
+        const firebaseConfig = {
+            apiKey: "AIzaSyDn04LCckI_-sxQvHe4frnheCcvQSa6gCc",
+            authDomain: "mybookspace-jennifer.firebaseapp.com",
+            projectId: "mybookspace-jennifer",
+            storageBucket: "mybookspace-jennifer.firebasestorage.app",
+            messagingSenderId: "842011822044",
+            appId: "1:842011822044:web:d801617e044c86be98f119",
+            measurementId: "G-S48BPR0TDX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Utility function to get query parameters
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const mode = getParameterByName('mode');
+            const actionCode = getParameterByName('oobCode');
+            const continueUrl = getParameterByName('continueUrl'); // Optional for general return
+            const lang = getParameterByName('lang') || 'en'; // Optional language code
+
+            const messageDiv = document.getElementById('message');
+
+            if (!mode || !actionCode) {
+                messageDiv.textContent = 'Error: Missing mode or action code.';
+                return;
+            }
+
+            // Set the language for Firebase Auth UI (if you're localizing)
+            auth.languageCode = lang;
+
+            switch (mode) {
+                case 'resetPassword':
+                    handleResetPassword(auth, actionCode, continueUrl, lang, messageDiv);
+                    break;
+                case 'verifyEmail':
+                    handleVerifyEmail(auth, actionCode, continueUrl, lang, messageDiv);
+                    break;
+
+                default:
+                    messageDiv.textContent = 'Error: Invalid action mode.';
+            }
+        });
+
+        async function handleResetPassword(authInstance, actionCode, continueUrl, lang, messageDiv) {
+            messageDiv.textContent = 'Verifying password reset request...';
+            try {
+                const email = await verifyPasswordResetCode(authInstance, actionCode);
+                messageDiv.textContent = `Password reset request verified for ${email}. Redirecting to new password form...`;
+
+                window.location.href = `/login-signup/auth_fill_new_password.html?oobCode=${actionCode}&email=${encodeURIComponent(email)}`;
+            } catch (error) {
+                console.error("Error verifying password reset code:", error);
+                messageDiv.textContent = `Error: Could not verify password reset code. It might be invalid or expired. Please try again. (${error.message})`;
+            }
+        }
+
+        async function handleVerifyEmail(authInstance, actionCode, continueUrl, lang, messageDiv) {
+            messageDiv.textContent = 'Verifying email address...';
+            try {
+                await applyActionCode(authInstance, actionCode);
+                messageDiv.textContent = 'Email address successfully verified! Redirecting to dashboard...';
+                window.location.href = continueUrl || '/pages/dashboard.html';
+            } catch (error) {
+                console.error("Error verifying email:", error);
+                messageDiv.textContent = `Error: Could not verify email address. It might be invalid or expired. Please try again. (${error.message})`;
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <h1>Processing Firebase Action...</h1>
+    <p id="message">Please wait...</p>
+</body>
+</html>

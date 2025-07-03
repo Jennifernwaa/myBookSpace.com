@@ -41,7 +41,6 @@ registerButton.addEventListener("click", async (e) => { // Added 'async' because
             window.alert("Success! Account created. Please check your email to verify your address.");
             // Instead of going straight to the dashboard, maybe redirect them
             // to a page that reminds them to check their email.
-            window.location.href = '../pages/dashboard.html'; // Example: create a check-email page
 
         } catch (error) {
             const errorCode = error.code;
